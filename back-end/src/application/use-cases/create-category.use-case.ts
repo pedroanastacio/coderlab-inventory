@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
-import { Category } from '../entities/category.entity';
-import type { CategoryRepository } from '../repositories/category.repository';
-import { CATEGORY_REPOSITORY } from '../repositories/tokens';
+import { Category } from '../../domain/entities/category.entity';
+import type { CategoryRepository } from '../../domain/repositories/category.repository';
+import { CATEGORY_REPOSITORY } from '../../domain/repositories/tokens';
 
 interface CreateCategoryInput {
   name: string;
