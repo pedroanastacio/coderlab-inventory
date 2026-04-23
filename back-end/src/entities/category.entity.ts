@@ -36,14 +36,10 @@ export class Category {
     return this._parentId;
   }
 
-  validateHierarchy(ancestors: Category[]) {
+  validateHierarchy(parentId: string) {
     if (!this._id) return;
 
-    const relatedToItself = ancestors.some(
-      (ancestor) => ancestor.id === this._id,
-    );
-
-    if (relatedToItself) {
+    if (parentId === this._id) {
       throw new Error('Category cannot be related to itself');
     }
   }
