@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Category } from '../../domain/entities/category.entity';
 import type { CategoryRepository } from '../../domain/repositories/category.repository';
 import { CATEGORY_REPOSITORY } from '../../domain/repositories/tokens';
@@ -19,7 +19,15 @@ export class CreateCategoryUseCase {
   ) {}
 
   async execute(input: CreateCategoryInput): Promise<CreateCategoryOutput> {
-    // TODO: Validate if parentId exists
+    if (input.parentId) {
+      const parentExists = await this.categoryRepository.findById(
+        input.parentId,
+      );
+
+      if (!parentExists) {
+        throw new NotFoundException('Parent category not found');
+      }
+    }
 
     const category = new Category({
       name: input.name,
