@@ -1,0 +1,31 @@
+import { Inject } from '@nestjs/common';
+import { Category } from '../entities/category.entity';
+import type { CategoryRepository } from '../repositories/category.repository';
+import { CATEGORY_REPOSITORY } from '../repositories/tokens';
+
+interface CreateCategoryInput {
+  name: string;
+  description?: string | null;
+  parentId?: string | null;
+}
+
+type CreateCategoryOutput = Category;
+
+export class CreateCategoryUseCase {
+  constructor(
+    @Inject(CATEGORY_REPOSITORY)
+    private readonly categoryRepository: CategoryRepository,
+  ) {}
+
+  async execute(input: CreateCategoryInput): Promise<CreateCategoryOutput> {
+    // TODO: Validate if parentId exists
+
+    const category = new Category({
+      name: input.name,
+      description: input.description ?? null,
+      parentId: input.parentId ?? null,
+    });
+
+    return this.categoryRepository.create(category);
+  }
+}
