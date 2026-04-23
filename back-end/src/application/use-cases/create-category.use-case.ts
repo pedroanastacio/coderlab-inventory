@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Category } from '../../domain/entities/category.entity';
 import type { CategoryRepository } from '../../domain/repositories/category.repository';
 import { CATEGORY_REPOSITORY } from '../../domain/repositories/tokens';
@@ -11,6 +11,7 @@ interface CreateCategoryInput {
 
 type CreateCategoryOutput = Category;
 
+@Injectable()
 export class CreateCategoryUseCase {
   constructor(
     @Inject(CATEGORY_REPOSITORY)
