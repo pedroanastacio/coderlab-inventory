@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 
 import { ApiCreatedResponse } from '@nestjs/swagger';
-import { CreateCategoryUseCase } from '../../application/use-cases/create-category.use-case';
+import { CreateCategoryUseCase } from '../../../application/use-cases/create-category.use-case';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { CategoryResponseDto } from '../dtos/category-response.dto';
 
