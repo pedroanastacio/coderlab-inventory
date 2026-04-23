@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsDateString, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CategoryResponseDto {
   @IsUUID()
@@ -24,4 +24,12 @@ export class CategoryResponseDto {
     required: false,
   })
   parentId?: string | null;
+
+  @IsDateString()
+  @ApiProperty({ type: 'string', format: 'date-time' })
+  createdAt!: Date;
+
+  @IsDateString()
+  @ApiProperty({ type: 'string', format: 'date-time' })
+  updatedAt!: Date;
 }

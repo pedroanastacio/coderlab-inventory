@@ -4,6 +4,7 @@ import { ApiCreatedResponse } from '@nestjs/swagger';
 import { CreateCategoryUseCase } from '../../../application/use-cases/create-category.use-case';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { CategoryResponseDto } from '../dtos/category-response.dto';
+import { CategoryMapper } from '../mappers/category-mapper.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -17,11 +18,6 @@ export class CategoryController {
     const category =
       await this.createCategoryUseCase.execute(createCategoryDto);
 
-    return {
-      id: category.id!,
-      name: category.name,
-      description: category.description,
-      parentId: category.parentId,
-    };
+    return CategoryMapper.toDto(category);
   }
 }

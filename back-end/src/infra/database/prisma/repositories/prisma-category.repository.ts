@@ -2,25 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { CategoryRepository } from '../../../../domain/repositories/category.repository';
 import { PrismaService } from '../prisma.service';
 import { Category } from '../../../../domain/entities/category.entity';
+import { PrismaCategoryMapper } from '../mappers/category.mapper';
 
 @Injectable()
 export class PrismaCategoryRepository implements CategoryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(category: Category): Promise<Category> {
+    const prismaCategory = PrismaCategoryMapper.toPersistence(category);
+
     const data = await this.prisma.category.create({
-      data: {
-        name: category.name,
-        description: category.description ?? null,
-        parentId: category.parentId ?? null,
-      },
+      data: prismaCategory,
     });
 
-    return new Category({
-      id: data.id,
-      name: data.name,
-      description: data.description,
-      parentId: data.parentId,
-    });
+    return PrismaCategoryMapper.toDomain(data);
   }
 }
