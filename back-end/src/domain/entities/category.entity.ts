@@ -1,3 +1,5 @@
+import { ValidationError } from '../errors/validation.error';
+
 export interface CategoryProps {
   id?: string;
   name: string;
@@ -54,17 +56,17 @@ export class Category {
     if (!this._id) return;
 
     if (parentId === this._id) {
-      throw new Error('Category cannot be related to itself');
+      throw new ValidationError('Category cannot be related to itself');
     }
   }
 
   private validate(props: CategoryProps) {
     if (!props.name) {
-      throw new Error('Category name is required');
+      throw new ValidationError('Category name is required');
     }
 
     if (props.parentId && props.id && props.parentId === props.id) {
-      throw new Error('Category cannot be related to itself');
+      throw new ValidationError('Category cannot be related to itself');
     }
   }
 }

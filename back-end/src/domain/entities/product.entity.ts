@@ -1,3 +1,5 @@
+import { ValidationError } from '../errors/validation.error';
+
 export interface ProductProps {
   id?: string;
   name: string;
@@ -66,19 +68,19 @@ export class Product {
 
   private checkName(name: string) {
     if (!name || name.trim() === '') {
-      throw new Error('Product name is required');
+      throw new ValidationError('Product name is required');
     }
   }
 
   private checkPrice(price: number) {
     if (price < 0) {
-      throw new Error('Product price cannot be negative');
+      throw new ValidationError('Product price cannot be negative');
     }
   }
 
   private checkCategoryIds(categoryIds: string[]) {
     if (!categoryIds || categoryIds.length === 0) {
-      throw new Error('Product must belong to at least one category');
+      throw new ValidationError('Product must belong to at least one category');
     }
   }
 
