@@ -3,6 +3,7 @@ import { AppModule } from './infra/modules/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { ValidationPipe } from '@nestjs/common';
+import { DomainErrorFilter } from './infra/http/filters/domain-error.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +15,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.useGlobalFilters(new DomainErrorFilter());
 
   const config = new DocumentBuilder()
     .setTitle('Coderlab Inventory API')
