@@ -69,7 +69,6 @@ pnpm dev
 ## Skills
 
 - **nestjs-best-practices**: Backend NestJS
-- **shadcn-ui**: Frontend shadcn/ui
 
 ---
 
@@ -77,4 +76,3 @@ pnpm dev
 
 - Requisitos: `docs/requirements.md`
 - Skill NestJS: `.agents/skills/nestjs-best-practices/`
-- Skill shadcn-ui: `.agents/skills/shadcn-ui/`
