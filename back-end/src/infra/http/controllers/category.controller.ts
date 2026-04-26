@@ -1,15 +1,36 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { CreateCategoryUseCase } from '../../../application/use-cases/create-category.use-case';
 import { FindCategoryByIdUseCase } from '../../../application/use-cases/find-category-by-id.use-case';
+import { FindAllCategoriesUseCase } from '../../../application/use-cases/find-all-categories.use-case';
 import { UpdateCategoryUseCase } from '../../../application/use-cases/update-category.use-case';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { FindCategoryByIdParamsDto } from '../dtos/find-category-by-id-params.dto';
+import {
+  FindAllCategoriesDto,
+  FindCategorySortField,
+} from '../dtos/find-all-categories.dto';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { CategoryResponseDto } from '../dtos/category-response.dto';
 import { CategoryMapper } from '../mappers/category-mapper.dto';
 import { UpdateCategoryParamsDto } from '../dtos/update-category-params.dto';
+import { PaginatedResponseDto } from '../dtos/paginated-response.dto';
+import { SortOrder } from '../../../shared/types';
+import { ApiPaginatedResponse } from '../decorators/api-paginated-response.decorator';
 
 @Controller('category')
 @ApiTags('category')
@@ -17,6 +38,7 @@ export class CategoryController {
   constructor(
     private readonly createCategoryUseCase: CreateCategoryUseCase,
     private readonly findCategoryByIdUseCase: FindCategoryByIdUseCase,
+    private readonly findAllCategoriesUseCase: FindAllCategoriesUseCase,
     private readonly updateCategoryUseCase: UpdateCategoryUseCase,
   ) {}
 
@@ -41,6 +63,53 @@ export class CategoryController {
     });
 
     return CategoryMapper.toDto(category);
+  }
+
+  @Get()
+  @ApiQuery({ name: 'query', required: false, type: 'string' })
+  @ApiQuery({
+    name: 'parentId',
+    required: false,
+    type: 'string',
+    format: 'uuid',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: 'integer',
+    minimum: 1,
+    default: 1,
+  })
+  @ApiQuery({ name: 'perPage', required: false, type: 'integer', default: 10 })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: FindCategorySortField,
+    default: FindCategorySortField.CREATED_AT,
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    enum: SortOrder,
+    default: SortOrder.ASC,
+  })
+  @ApiPaginatedResponse(CategoryResponseDto)
+  async findAll(
+    @Query() findAllCategoriesDto: FindAllCategoriesDto,
+  ): Promise<PaginatedResponseDto<CategoryResponseDto>> {
+    const { query, parentId, page, perPage, sortBy, sortOrder } =
+      findAllCategoriesDto;
+
+    const result = await this.findAllCategoriesUseCase.execute({
+      filters: { query: query, parentId: parentId },
+      pagination: { page, perPage },
+      sort: { sortBy, sortOrder },
+    });
+
+    return {
+      data: result.data.map((c) => CategoryMapper.toDto(c)),
+      pagination: result.pagination,
+    };
   }
 
   @Patch(':id')

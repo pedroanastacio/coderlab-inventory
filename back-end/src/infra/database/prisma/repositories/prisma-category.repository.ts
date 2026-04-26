@@ -1,8 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryRepository } from '../../../../domain/repositories/category.repository';
+import type {
+  CategoryRepository,
+  CategoryFilterParams,
+} from '../../../../domain/repositories/category.repository';
 import { PrismaService } from '../prisma.service';
 import { Category } from '../../../../domain/entities/category.entity';
 import { PrismaCategoryMapper } from '../mappers/category.mapper';
+import type { PaginationParams } from '../../../../shared/types/pagination-params.types';
+import type { SortParams } from '../../../../shared/types/sort-params.types';
+import type { PaginatedResult } from '../../../../shared/types/paginated-result.types';
+import { Prisma } from '../../../../generated/prisma/client';
 
 @Injectable()
 export class PrismaCategoryRepository implements CategoryRepository {
@@ -39,5 +46,47 @@ export class PrismaCategoryRepository implements CategoryRepository {
     });
 
     return PrismaCategoryMapper.toDomain(data);
+  }
+
+  async findAll(
+    filters: CategoryFilterParams,
+    pagination: PaginationParams,
+    sort: SortParams<string>,
+  ): Promise<PaginatedResult<Category>> {
+    const whereClause: Prisma.CategoryWhereInput = {};
+
+    if (filters.query) {
+      whereClause.OR = [
+        { name: { contains: filters.query, mode: 'insensitive' } },
+        { description: { contains: filters.query, mode: 'insensitive' } },
+      ];
+    }
+
+    if (filters.parentId) {
+      whereClause.parentId = filters.parentId;
+    }
+
+    const total = await this.prisma.category.count({ where: whereClause });
+
+    const data = await this.prisma.category.findMany({
+      where: whereClause,
+      skip: (pagination.page - 1) * pagination.perPage,
+      take: pagination.perPage,
+      orderBy: {
+        [sort.sortBy]: sort.sortOrder,
+      },
+    });
+
+    const categories = data.map((c) => PrismaCategoryMapper.toDomain(c));
+
+    return {
+      data: categories,
+      pagination: {
+        total,
+        page: pagination.page,
+        perPage: pagination.perPage,
+        pageCount: Math.ceil(total / pagination.perPage),
+      },
+    };
   }
 }
