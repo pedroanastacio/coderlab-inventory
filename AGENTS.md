@@ -47,6 +47,7 @@ pnpm dev
 - `domain/` - Entities + Repository interfaces
 - `application/` - Use cases
 - `infra/` - Controllers, DTOs, Prisma repositories
+- `shared/` - Common types and functions
 
 ### Frontend (Vite + shadcn/ui)
 
