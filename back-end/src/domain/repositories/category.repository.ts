@@ -16,4 +16,5 @@ export interface CategoryRepository {
     pagination: PaginationParams,
     sort: SortParams<string>,
   ): Promise<PaginatedResult<Category>>;
+  delete(id: string): Promise<void>;
 }

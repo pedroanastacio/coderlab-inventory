@@ -83,4 +83,13 @@ export class InMemoryCategoryRepository implements CategoryRepository {
   clear(): void {
     this.categories = [];
   }
+
+  async delete(id: string): Promise<void> {
+    const index = this.categories.findIndex((c) => c.id === id);
+    if (index === -1) {
+      throw new NotFoundError('Category not found');
+    }
+    this.categories.splice(index, 1);
+    return Promise.resolve();
+  }
 }

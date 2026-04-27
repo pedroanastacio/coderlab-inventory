@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -13,11 +14,13 @@ import {
   ApiOkResponse,
   ApiTags,
   ApiQuery,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { CreateCategoryUseCase } from '../../../application/use-cases/create-category.use-case';
 import { FindCategoryByIdUseCase } from '../../../application/use-cases/find-category-by-id.use-case';
 import { FindAllCategoriesUseCase } from '../../../application/use-cases/find-all-categories.use-case';
 import { UpdateCategoryUseCase } from '../../../application/use-cases/update-category.use-case';
+import { DeleteCategoryUseCase } from '../../../application/use-cases/delete-category.use-case';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { FindCategoryByIdParamsDto } from '../dtos/find-category-by-id-params.dto';
 import {
@@ -31,6 +34,7 @@ import { UpdateCategoryParamsDto } from '../dtos/update-category-params.dto';
 import { PaginatedResponseDto } from '../dtos/paginated-response.dto';
 import { SortOrder } from '../../../shared/types';
 import { ApiPaginatedResponse } from '../decorators/api-paginated-response.decorator';
+import { DeleteCategoryParamsDto } from '../dtos/delete-category-params.dto';
 
 @Controller('category')
 @ApiTags('category')
@@ -40,6 +44,7 @@ export class CategoryController {
     private readonly findCategoryByIdUseCase: FindCategoryByIdUseCase,
     private readonly findAllCategoriesUseCase: FindAllCategoriesUseCase,
     private readonly updateCategoryUseCase: UpdateCategoryUseCase,
+    private readonly deleteCategoryUseCase: DeleteCategoryUseCase,
   ) {}
 
   @Post()
@@ -124,5 +129,11 @@ export class CategoryController {
     });
 
     return CategoryMapper.toDto(category);
+  }
+
+  @Delete(':id')
+  @ApiNoContentResponse()
+  async delete(@Param() params: DeleteCategoryParamsDto): Promise<void> {
+    await this.deleteCategoryUseCase.execute({ id: params.id });
   }
 }
