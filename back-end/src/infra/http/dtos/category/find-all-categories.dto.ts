@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SortOrder } from '../../../shared/types/sort-params.types';
+import { SortOrder } from '../../../../shared/types/sort-params.types';
 import {
   IsOptional,
   IsString,

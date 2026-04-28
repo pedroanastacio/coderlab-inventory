@@ -1,6 +1,6 @@
 import { Category } from '../../../domain/entities/category.entity';
 
-import { CategoryResponseDto } from '../dtos/category-response.dto';
+import { CategoryResponseDto } from '../dtos/category/category-response.dto';
 
 export class CategoryMapper {
   static toDto(data: Category): CategoryResponseDto {

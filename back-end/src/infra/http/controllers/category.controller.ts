@@ -21,20 +21,20 @@ import { FindCategoryByIdUseCase } from '../../../application/use-cases/find-cat
 import { FindAllCategoriesUseCase } from '../../../application/use-cases/find-all-categories.use-case';
 import { UpdateCategoryUseCase } from '../../../application/use-cases/update-category.use-case';
 import { DeleteCategoryUseCase } from '../../../application/use-cases/delete-category.use-case';
-import { CreateCategoryDto } from '../dtos/create-category.dto';
-import { FindCategoryByIdParamsDto } from '../dtos/find-category-by-id-params.dto';
+import { CreateCategoryDto } from '../dtos/category/create-category.dto';
+import { FindCategoryByIdParamsDto } from '../dtos/category/find-category-by-id-params.dto';
 import {
   FindAllCategoriesDto,
   FindCategorySortField,
-} from '../dtos/find-all-categories.dto';
-import { UpdateCategoryDto } from '../dtos/update-category.dto';
-import { CategoryResponseDto } from '../dtos/category-response.dto';
+} from '../dtos/category/find-all-categories.dto';
+import { UpdateCategoryDto } from '../dtos/category/update-category.dto';
+import { CategoryResponseDto } from '../dtos/category/category-response.dto';
 import { CategoryMapper } from '../mappers/category-mapper.dto';
-import { UpdateCategoryParamsDto } from '../dtos/update-category-params.dto';
+import { UpdateCategoryParamsDto } from '../dtos/category/update-category-params.dto';
 import { PaginatedResponseDto } from '../dtos/paginated-response.dto';
 import { SortOrder } from '../../../shared/types';
 import { ApiPaginatedResponse } from '../decorators/api-paginated-response.decorator';
-import { DeleteCategoryParamsDto } from '../dtos/delete-category-params.dto';
+import { DeleteCategoryParamsDto } from '../dtos/category/delete-category-params.dto';
 
 @Controller('category')
 @ApiTags('category')
