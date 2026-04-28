@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Category } from '../../domain/entities/category.entity';
-import type { CategoryRepository } from '../../domain/repositories/category.repository';
-import { CATEGORY_REPOSITORY } from '../../domain/repositories/tokens';
+import { Category } from '../../../domain/entities/category.entity';
+import type { CategoryRepository } from '../../../domain/repositories/category.repository';
+import { CATEGORY_REPOSITORY } from '../../../domain/repositories/tokens';
 
 interface FindCategoryByIdInput {
   id: string;

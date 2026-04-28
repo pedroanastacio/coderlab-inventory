@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Category } from '../../domain/entities/category.entity';
+import { Category } from '../../../domain/entities/category.entity';
 import type {
   CategoryFilterParams,
   CategoryRepository,
-} from '../../domain/repositories/category.repository';
-import { CATEGORY_REPOSITORY } from '../../domain/repositories/tokens';
+} from '../../../domain/repositories/category.repository';
+import { CATEGORY_REPOSITORY } from '../../../domain/repositories/tokens';
 import type {
   PaginatedResult,
   PaginationParams,
   SortParams,
-} from '../../shared/types';
+} from '../../../shared/types';
 
 interface FindAllCategoriesInput {
   filters: CategoryFilterParams;

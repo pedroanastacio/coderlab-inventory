@@ -1,7 +1,7 @@
 import { FindAllCategoriesUseCase } from './find-all-categories.use-case';
-import { InMemoryCategoryRepository } from '../../infra/database/in-memory/repositories/in-memory-category.repository';
-import { Category } from '../../domain/entities/category.entity';
-import { SortOrder } from '../../shared/types/sort-params.types';
+import { InMemoryCategoryRepository } from '../../../infra/database/in-memory/repositories/in-memory-category.repository';
+import { Category } from '../../../domain/entities/category.entity';
+import { SortOrder } from '../../../shared/types/sort-params.types';
 
 const getMockFindAllCategoriesInput = (
   overrides?: Partial<{

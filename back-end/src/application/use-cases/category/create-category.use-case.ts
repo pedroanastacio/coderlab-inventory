@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Category } from '../../domain/entities/category.entity';
-import type { CategoryRepository } from '../../domain/repositories/category.repository';
-import { CATEGORY_REPOSITORY } from '../../domain/repositories/tokens';
-import { NotFoundError } from '../../domain/errors/not-found.error';
+import { Category } from '../../../domain/entities/category.entity';
+import type { CategoryRepository } from '../../../domain/repositories/category.repository';
+import { CATEGORY_REPOSITORY } from '../../../domain/repositories/tokens';
+import { NotFoundError } from '../../../domain/errors/not-found.error';
 
 interface CreateCategoryInput {
   name: string;

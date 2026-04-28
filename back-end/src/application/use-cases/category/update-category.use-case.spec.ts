@@ -1,7 +1,7 @@
-import { NotFoundError } from '../../domain/errors/not-found.error';
+import { NotFoundError } from '../../../domain/errors/not-found.error';
 import { UpdateCategoryUseCase } from './update-category.use-case';
-import { InMemoryCategoryRepository } from '../../infra/database/in-memory/repositories/in-memory-category.repository';
-import { Category } from '../../domain/entities/category.entity';
+import { InMemoryCategoryRepository } from '../../../infra/database/in-memory/repositories/in-memory-category.repository';
+import { Category } from '../../../domain/entities/category.entity';
 
 const getMockUpdateCategoryInput = (
   overrides?: Partial<{

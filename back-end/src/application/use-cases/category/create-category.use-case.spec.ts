@@ -1,6 +1,6 @@
-import { NotFoundError } from '../../domain/errors/not-found.error';
+import { NotFoundError } from '../../../domain/errors/not-found.error';
 import { CreateCategoryUseCase } from './create-category.use-case';
-import { InMemoryCategoryRepository } from '../../infra/database/in-memory/repositories/in-memory-category.repository';
+import { InMemoryCategoryRepository } from '../../../infra/database/in-memory/repositories/in-memory-category.repository';
 
 const getMockCreateCategoryInput = (
   overrides?: Partial<{
