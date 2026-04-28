@@ -1,7 +1,7 @@
 import { NotFoundError } from '../../../domain/errors/not-found.error';
 import { DeleteCategoryUseCase } from './delete-category.use-case';
 import { InMemoryCategoryRepository } from '../../../infra/database/in-memory/repositories/in-memory-category.repository';
-import { Category } from '../../../domain/entities/category.entity';
+import { Category } from '../../../domain/entities/category/category.entity';
 
 const getMockDeleteCategoryInput = (
   overrides?: Partial<{

@@ -1,6 +1,6 @@
 import { FindAllCategoriesUseCase } from './find-all-categories.use-case';
 import { InMemoryCategoryRepository } from '../../../infra/database/in-memory/repositories/in-memory-category.repository';
-import { Category } from '../../../domain/entities/category.entity';
+import { Category } from '../../../domain/entities/category/category.entity';
 import { SortOrder } from '../../../shared/types/sort-params.types';
 
 const getMockFindAllCategoriesInput = (

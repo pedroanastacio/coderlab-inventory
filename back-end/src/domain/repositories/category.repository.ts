@@ -1,4 +1,4 @@
-import { Category } from '../entities/category.entity';
+import { Category } from '../entities/category/category.entity';
 import type { PaginatedResult } from '../../shared/types/paginated-result.types';
 import type { FilterParams } from '../../shared/types/filter-params.types';
 import type { PaginationParams } from '../../shared/types/pagination-params.types';

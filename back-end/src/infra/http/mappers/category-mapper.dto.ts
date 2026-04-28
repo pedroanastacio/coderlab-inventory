@@ -1,4 +1,4 @@
-import { Category } from '../../../domain/entities/category.entity';
+import { Category } from '../../../domain/entities/category/category.entity';
 
 import { CategoryResponseDto } from '../dtos/category/category-response.dto';
 

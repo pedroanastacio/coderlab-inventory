@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Category } from '../../../domain/entities/category.entity';
+import { Category } from '../../../domain/entities/category/category.entity';
 import type {
   CategoryFilterParams,
   CategoryRepository,

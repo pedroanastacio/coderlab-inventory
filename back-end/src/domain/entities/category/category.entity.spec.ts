@@ -1,5 +1,5 @@
 import { Category, CategoryProps } from './category.entity';
-import { ValidationError } from '../errors/validation.error';
+import { ValidationError } from '../../errors/validation.error';
 
 describe('Category', () => {
   const getMockCategoryProps = (

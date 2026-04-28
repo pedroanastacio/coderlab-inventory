@@ -3,7 +3,7 @@ import type {
   CategoryRepository,
   CategoryFilterParams,
 } from '../../../../domain/repositories/category.repository';
-import { Category } from '../../../../domain/entities/category.entity';
+import { Category } from '../../../../domain/entities/category/category.entity';
 import type { PaginationParams } from '../../../../shared/types/pagination-params.types';
 import {
   SortOrder,

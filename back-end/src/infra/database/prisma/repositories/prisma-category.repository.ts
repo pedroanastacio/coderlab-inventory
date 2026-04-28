@@ -4,7 +4,7 @@ import type {
   CategoryFilterParams,
 } from '../../../../domain/repositories/category.repository';
 import { PrismaService } from '../prisma.service';
-import { Category } from '../../../../domain/entities/category.entity';
+import { Category } from '../../../../domain/entities/category/category.entity';
 import { PrismaCategoryMapper } from '../mappers/category.mapper';
 import type { PaginationParams } from '../../../../shared/types/pagination-params.types';
 import type { SortParams } from '../../../../shared/types/sort-params.types';
