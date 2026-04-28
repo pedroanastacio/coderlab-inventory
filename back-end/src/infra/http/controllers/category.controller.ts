@@ -7,6 +7,8 @@ import {
   Patch,
   Post,
   Query,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 
 import {
@@ -132,6 +134,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse()
   async delete(@Param() params: DeleteCategoryParamsDto): Promise<void> {
     await this.deleteCategoryUseCase.execute({ id: params.id });
