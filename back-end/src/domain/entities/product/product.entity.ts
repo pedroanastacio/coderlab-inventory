@@ -6,6 +6,8 @@ export interface ProductProps {
   description?: string | null;
   price: number;
   categoryIds: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export class Product {
@@ -14,15 +16,19 @@ export class Product {
   private _description?: string | null;
   private _price!: number;
   private _categoryIds!: string[];
+  private _createdAt: Date;
+  private _updatedAt: Date;
 
   constructor(props: ProductProps) {
     this.validate(props);
 
-    this._id = props.id;
+    this._id = props.id ?? crypto.randomUUID();
     this._name = props.name;
     this._description = props.description ?? null;
     this._price = props.price;
     this._categoryIds = props.categoryIds;
+    this._createdAt = props.createdAt ?? new Date();
+    this._updatedAt = props.updatedAt ?? new Date();
   }
 
   get id() {
@@ -43,6 +49,14 @@ export class Product {
 
   get categoryIds() {
     return this._categoryIds;
+  }
+
+  get createdAt() {
+    return this._createdAt;
+  }
+
+  get updatedAt() {
+    return this._updatedAt;
   }
 
   update(data: Partial<Omit<ProductProps, 'id'>>) {
