@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
+import { SortOrder } from '../src/shared/types';
 import { PrismaService } from '../src/infra/database/prisma/prisma.service';
 import { setupTestApp } from './helpers/setup-app';
 
@@ -12,6 +13,16 @@ interface ProductResponse {
   categoryIds: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+interface PaginatedProductResponse {
+  data: ProductResponse[];
+  pagination: {
+    page: number;
+    perPage: number;
+    total: number;
+    pageCount: number;
+  };
 }
 
 const getMockCreateProductBody = (
@@ -244,6 +255,165 @@ describe('ProductController (e2e)', () => {
       await request(app.getHttpServer())
         .get('/product/invalid-uuid')
         .expect(400);
+    });
+  });
+
+  describe('GET /product', () => {
+    beforeEach(async () => {
+      const catResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const cat = catResponse.body as { id: string };
+
+      await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Apple',
+            price: 100,
+            categoryIds: [cat.id],
+          }),
+        );
+
+      await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Banana',
+            price: 200,
+            categoryIds: [cat.id],
+          }),
+        );
+
+      await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Carrot',
+            price: 50,
+            description: 'Vegetables',
+            categoryIds: [cat.id],
+          }),
+        );
+    });
+
+    it('should return paginated results', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/product')
+        .expect(200);
+
+      const body = response.body as PaginatedProductResponse;
+      expect(body.data).toBeInstanceOf(Array);
+      expect(body.pagination).toMatchObject({
+        page: 1,
+        perPage: 10,
+      });
+      expect(body.data.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('should filter by query (name)', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/product?query=Apple')
+        .expect(200);
+
+      const body = response.body as PaginatedProductResponse;
+      expect(body.data).toBeInstanceOf(Array);
+      expect(body.data.length).toBe(1);
+      expect(body.data[0].name).toBe('Apple');
+    });
+
+    it('should filter by query (description)', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/product?query=Vegetables')
+        .expect(200);
+
+      const body = response.body as PaginatedProductResponse;
+      expect(body.data.length).toBe(1);
+      expect(body.data[0].name).toBe('Carrot');
+    });
+
+    it('should filter by categoryIds', async () => {
+      const catResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Food' })
+        .expect(201);
+
+      const cat = catResponse.body as { id: string };
+
+      await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Specific Product',
+            price: 50,
+            categoryIds: [cat.id],
+          }),
+        );
+
+      const response = await request(app.getHttpServer())
+        .get(`/product?categoryIds=${cat.id}`)
+        .expect(200);
+
+      const body = response.body as PaginatedProductResponse;
+      expect(body.data.length).toBe(1);
+      expect(body.data[0].name).toBe('Specific Product');
+    });
+
+    it('should sort by name ascending', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/product?sortBy=name&sortOrder=${SortOrder.ASC}`)
+        .expect(200);
+
+      const body = response.body as PaginatedProductResponse;
+      const names = body.data.map((p) => p.name);
+      const sorted = [...names].sort();
+      expect(names).toEqual(sorted);
+    });
+
+    it('should sort by name descending', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/product?sortBy=name&sortOrder=${SortOrder.DESC}`)
+        .expect(200);
+
+      const body = response.body as PaginatedProductResponse;
+      const names = body.data.map((p) => p.name);
+      const sorted = [...names].sort().reverse();
+      expect(names).toEqual(sorted);
+    });
+
+    it('should sort by price ascending', async () => {
+      const response = await request(app.getHttpServer())
+        .get(`/product?sortBy=price&sortOrder=${SortOrder.ASC}`)
+        .expect(200);
+
+      const body = response.body as PaginatedProductResponse;
+      const prices = body.data.map((p) => p.price);
+      const sorted = [...prices].sort((a, b) => a - b);
+      expect(prices).toEqual(sorted);
+    });
+
+    it('should paginate with page and perPage', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/product?page=1&perPage=2')
+        .expect(200);
+
+      const body = response.body as PaginatedProductResponse;
+      expect(body.data.length).toBeLessThanOrEqual(2);
+      expect(body.pagination.page).toBe(1);
+      expect(body.pagination.perPage).toBe(2);
+      expect(body.pagination.total).toBeGreaterThanOrEqual(3);
+    });
+
+    it('should return empty data when no matches', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/product?query=NonExistent')
+        .expect(200);
+
+      const body = response.body as PaginatedProductResponse;
+      expect(body.data).toEqual([]);
+      expect(body.pagination.total).toBe(0);
     });
   });
 

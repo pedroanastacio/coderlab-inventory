@@ -50,9 +50,9 @@ export class InMemoryProductRepository implements ProductRepository {
       );
     }
 
-    if (filters.categoryId) {
+    if (filters.categoryIds && filters.categoryIds.length > 0) {
       result = result.filter((p) =>
-        p.categoryIds.includes(filters.categoryId!),
+        p.categoryIds.some((catId) => filters.categoryIds!.includes(catId)),
       );
     }
 

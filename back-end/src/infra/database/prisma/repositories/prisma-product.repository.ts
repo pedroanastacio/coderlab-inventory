@@ -70,9 +70,9 @@ export class PrismaProductRepository implements ProductRepository {
       ];
     }
 
-    if (filters.categoryId) {
+    if (filters.categoryIds && filters.categoryIds.length > 0) {
       whereClause.categories = {
-        some: { categoryId: filters.categoryId },
+        some: { categoryId: { in: filters.categoryIds } },
       };
     }
 

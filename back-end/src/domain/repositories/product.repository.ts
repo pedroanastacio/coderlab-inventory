@@ -5,7 +5,7 @@ import type { PaginationParams } from '../../shared/types/pagination-params.type
 import type { SortParams } from '../../shared/types/sort-params.types';
 
 export type ProductFilterParams = FilterParams<string> & {
-  categoryId?: string;
+  categoryIds?: string[];
 };
 
 export interface ProductRepository {
