@@ -246,4 +246,257 @@ describe('ProductController (e2e)', () => {
         .expect(400);
     });
   });
+
+  describe('PATCH /product/:id', () => {
+    it('should update product with valid data', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createdResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Original',
+            description: 'Original desc',
+            price: 100,
+            categoryIds: [category.id],
+          }),
+        )
+        .expect(201);
+
+      const created = createdResponse.body as ProductResponse;
+
+      const response = await request(app.getHttpServer())
+        .patch(`/product/${created.id}`)
+        .send({
+          name: 'Updated',
+          description: 'Updated desc',
+          price: 200,
+        })
+        .expect(200);
+
+      const body = response.body as ProductResponse;
+      expect(body).toMatchObject({
+        id: created.id,
+        name: 'Updated',
+        description: 'Updated desc',
+        price: 200,
+      });
+    });
+
+    it('should partially update (only name)', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createdResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Original',
+            price: 100,
+            categoryIds: [category.id],
+          }),
+        )
+        .expect(201);
+
+      const created = createdResponse.body as ProductResponse;
+
+      const response = await request(app.getHttpServer())
+        .patch(`/product/${created.id}`)
+        .send({ name: 'New Name' })
+        .expect(200);
+
+      const body = response.body as ProductResponse;
+      expect(body).toMatchObject({
+        name: 'New Name',
+        price: 100,
+      });
+    });
+
+    it('should partially update (only price)', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createdResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Original',
+            price: 100,
+            categoryIds: [category.id],
+          }),
+        )
+        .expect(201);
+
+      const created = createdResponse.body as ProductResponse;
+
+      const response = await request(app.getHttpServer())
+        .patch(`/product/${created.id}`)
+        .send({ price: 250 })
+        .expect(200);
+
+      const body = response.body as ProductResponse;
+      expect(body).toMatchObject({
+        name: 'Original',
+        price: 250,
+      });
+    });
+
+    it('should return 404 for non-existent ID', async () => {
+      await request(app.getHttpServer())
+        .patch('/product/00000000-0000-0000-0000-000000000000')
+        .send({ name: 'Test' })
+        .expect(404);
+    });
+
+    it('should return 400 for invalid UUID', async () => {
+      await request(app.getHttpServer())
+        .patch('/product/invalid-uuid')
+        .send({ name: 'Test' })
+        .expect(400);
+    });
+
+    it('should return 400 when name is empty', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createdResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Original',
+            categoryIds: [category.id],
+          }),
+        )
+        .expect(201);
+
+      const created = createdResponse.body as ProductResponse;
+
+      await request(app.getHttpServer())
+        .patch(`/product/${created.id}`)
+        .send({ name: '' })
+        .expect(400);
+    });
+
+    it('should return 400 when price is negative', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createdResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Original',
+            price: 100,
+            categoryIds: [category.id],
+          }),
+        )
+        .expect(201);
+
+      const created = createdResponse.body as ProductResponse;
+
+      await request(app.getHttpServer())
+        .patch(`/product/${created.id}`)
+        .send({ price: -10 })
+        .expect(400);
+    });
+
+    it('should return 400 when categoryIds is empty', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createdResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Original',
+            categoryIds: [category.id],
+          }),
+        )
+        .expect(201);
+
+      const created = createdResponse.body as ProductResponse;
+
+      await request(app.getHttpServer())
+        .patch(`/product/${created.id}`)
+        .send({ categoryIds: [] })
+        .expect(400);
+    });
+
+    it('should return 400 when categoryIds contains invalid UUID', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createdResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Original',
+            categoryIds: [category.id],
+          }),
+        )
+        .expect(201);
+
+      const created = createdResponse.body as ProductResponse;
+
+      await request(app.getHttpServer())
+        .patch(`/product/${created.id}`)
+        .send({ categoryIds: ['not-a-valid-uuid'] })
+        .expect(400);
+    });
+
+    it('should return 404 when category does not exist', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createdResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'Original',
+            categoryIds: [category.id],
+          }),
+        )
+        .expect(201);
+
+      const created = createdResponse.body as ProductResponse;
+
+      await request(app.getHttpServer())
+        .patch(`/product/${created.id}`)
+        .send({ categoryIds: ['a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d'] })
+        .expect(404);
+    });
+  });
 });

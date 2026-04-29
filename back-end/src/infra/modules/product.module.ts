@@ -5,6 +5,7 @@ import { ProductController } from '../http/controllers/product.controller';
 import { PRODUCT_REPOSITORY } from '../../domain/repositories/tokens';
 import { PrismaProductRepository } from '../database/prisma/repositories/prisma-product.repository';
 import { CategoryModule } from './category.module';
+import { UpdateProductUseCase } from '../../application/use-cases/product/update-product.use-case';
 
 @Module({
   imports: [CategoryModule],
@@ -15,6 +16,7 @@ import { CategoryModule } from './category.module';
     },
     CreateProductUseCase,
     FindProductByIdUseCase,
+    UpdateProductUseCase,
   ],
   controllers: [ProductController],
 })
