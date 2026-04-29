@@ -669,4 +669,47 @@ describe('ProductController (e2e)', () => {
         .expect(404);
     });
   });
+
+  describe('DELETE /product/:id', () => {
+    it('should delete existing product', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Test Category' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createdResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({
+            name: 'To Delete',
+            categoryIds: [category.id],
+          }),
+        )
+        .expect(201);
+
+      const created = createdResponse.body as ProductResponse;
+
+      await request(app.getHttpServer())
+        .delete(`/product/${created.id}`)
+        .expect(204);
+
+      await request(app.getHttpServer())
+        .get(`/product/${created.id}`)
+        .expect(404);
+    });
+
+    it('should return 404 for non-existent ID', async () => {
+      await request(app.getHttpServer())
+        .delete('/product/00000000-0000-0000-0000-000000000000')
+        .expect(404);
+    });
+
+    it('should return 400 for invalid UUID', async () => {
+      await request(app.getHttpServer())
+        .delete('/product/invalid-uuid')
+        .expect(400);
+    });
+  });
 });

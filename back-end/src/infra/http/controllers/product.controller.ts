@@ -1,22 +1,27 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
   Post,
   Query,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiTags,
   ApiQuery,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { CreateProductUseCase } from '../../../application/use-cases/product/create-product.use-case';
 import { FindProductByIdUseCase } from '../../../application/use-cases/product/find-product-by-id.use-case';
 import { FindAllProductsUseCase } from '../../../application/use-cases/product/find-all-products.use-case';
 import { UpdateProductUseCase } from '../../../application/use-cases/product/update-product.use-case';
+import { DeleteProductUseCase } from '../../../application/use-cases/product/delete-product.use-case';
 import { CreateProductDto } from '../dtos/product/create-product.dto';
 import { FindProductByIdParamsDto } from '../dtos/product/find-product-by-id-params.dto';
 import {
@@ -25,6 +30,7 @@ import {
 } from '../dtos/product/find-all-products.dto';
 import { UpdateProductDto } from '../dtos/product/update-product.dto';
 import { UpdateProductParamsDto } from '../dtos/product/update-product-params.dto';
+import { DeleteProductParamsDto } from '../dtos/product/delete-product-params.dto';
 import { ProductResponseDto } from '../dtos/product/product-response.dto';
 import { ProductMapper } from '../mappers/product-mapper.dto';
 import { PaginatedResponseDto } from '../dtos/paginated-response.dto';
@@ -39,6 +45,7 @@ export class ProductController {
     private readonly findProductByIdUseCase: FindProductByIdUseCase,
     private readonly findAllProductsUseCase: FindAllProductsUseCase,
     private readonly updateProductUseCase: UpdateProductUseCase,
+    private readonly deleteProductUseCase: DeleteProductUseCase,
   ) {}
 
   @Post()
@@ -122,5 +129,12 @@ export class ProductController {
     });
 
     return ProductMapper.toDto(product);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  async delete(@Param() params: DeleteProductParamsDto): Promise<void> {
+    await this.deleteProductUseCase.execute({ id: params.id });
   }
 }

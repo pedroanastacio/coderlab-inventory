@@ -102,8 +102,14 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.product.delete({
-      where: { id },
+    await this.prisma.$transaction(async (tx) => {
+      await tx.categoryOnProduct.deleteMany({
+        where: { productId: id },
+      });
+
+      await tx.product.delete({
+        where: { id },
+      });
     });
   }
 }
