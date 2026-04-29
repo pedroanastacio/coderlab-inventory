@@ -11,7 +11,7 @@ export interface ProductProps {
 }
 
 export class Product {
-  private _id?: string;
+  private _id: string;
   private _name!: string;
   private _description?: string | null;
   private _price!: number;

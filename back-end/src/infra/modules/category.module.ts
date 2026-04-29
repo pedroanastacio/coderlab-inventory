@@ -21,5 +21,6 @@ import { PrismaCategoryRepository } from '../database/prisma/repositories/prisma
     DeleteCategoryUseCase,
   ],
   controllers: [CategoryController],
+  exports: [CATEGORY_REPOSITORY],
 })
 export class CategoryModule {}
