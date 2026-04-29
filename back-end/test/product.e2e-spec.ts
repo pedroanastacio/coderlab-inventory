@@ -207,4 +207,43 @@ describe('ProductController (e2e)', () => {
         .expect(404);
     });
   });
+
+  describe('GET /product/:id', () => {
+    it('should return a product with valid id', async () => {
+      const categoryResponse = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Electronics' })
+        .expect(201);
+
+      const category = categoryResponse.body as { id: string };
+
+      const createResponse = await request(app.getHttpServer())
+        .post('/product')
+        .send(getMockCreateProductBody({ categoryIds: [category.id] }))
+        .expect(201);
+
+      const productId = (createResponse.body as { id: string }).id;
+
+      const response = await request(app.getHttpServer())
+        .get(`/product/${productId}`)
+        .expect(200);
+
+      const body = response.body as ProductResponse;
+      expect(body.id).toBe(productId);
+      expect(body.name).toBe('Test Product');
+      expect(body.price).toBe(99.9);
+    });
+
+    it('should return 404 when product does not exist', async () => {
+      await request(app.getHttpServer())
+        .get('/product/a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d')
+        .expect(404);
+    });
+
+    it('should return 400 when id is invalid UUID', async () => {
+      await request(app.getHttpServer())
+        .get('/product/invalid-uuid')
+        .expect(400);
+    });
+  });
 });
