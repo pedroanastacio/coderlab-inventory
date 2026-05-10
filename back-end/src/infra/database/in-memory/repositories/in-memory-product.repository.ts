@@ -22,7 +22,8 @@ export class InMemoryProductRepository implements ProductRepository {
   }
 
   async findById(id: string): Promise<Product | null> {
-    return Promise.resolve(this.products.find((p) => p.id === id) ?? null);
+    const product = this.products.find((p) => p.id === id && !p.deletedAt);
+    return Promise.resolve(product ?? null);
   }
 
   async update(product: Product): Promise<Product> {
@@ -39,7 +40,7 @@ export class InMemoryProductRepository implements ProductRepository {
     pagination: PaginationParams,
     sort: SortParams<string>,
   ): Promise<PaginatedResult<Product>> {
-    let result = [...this.products];
+    let result = this.products.filter((p) => !p.deletedAt);
 
     if (filters.query) {
       const query = filters.query.toLowerCase();
@@ -91,7 +92,17 @@ export class InMemoryProductRepository implements ProductRepository {
     if (index === -1) {
       throw new NotFoundError('Product not found');
     }
-    this.products.splice(index, 1);
+    const existing = this.products[index];
+    this.products[index] = new Product({
+      id: existing.id,
+      name: existing.name,
+      description: existing.description,
+      price: existing.price,
+      categoryIds: existing.categoryIds,
+      deletedAt: new Date(),
+      createdAt: existing.createdAt,
+      updatedAt: existing.updatedAt,
+    });
     return Promise.resolve();
   }
 }

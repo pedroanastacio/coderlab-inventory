@@ -5,6 +5,7 @@ export interface CategoryProps {
   name: string;
   description?: string | null;
   parentId?: string | null;
+  deletedAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -14,6 +15,7 @@ export class Category {
   private _name!: string;
   private _description?: string | null;
   private _parentId?: string | null;
+  private _deletedAt?: Date | null;
   private _createdAt: Date;
   private _updatedAt: Date;
 
@@ -24,6 +26,7 @@ export class Category {
     this._name = props.name;
     this._description = props.description ?? null;
     this._parentId = props.parentId ?? null;
+    this._deletedAt = props.deletedAt ?? null;
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
   }
@@ -50,6 +53,10 @@ export class Category {
 
   get updatedAt() {
     return this._updatedAt;
+  }
+
+  get deletedAt() {
+    return this._deletedAt;
   }
 
   validateHierarchy(parentId: string) {

@@ -30,7 +30,7 @@ export class PrismaCategoryRepository implements CategoryRepository {
       where: { id },
     });
 
-    if (!data) {
+    if (!data || data.deletedAt) {
       return null;
     }
 
@@ -41,7 +41,7 @@ export class PrismaCategoryRepository implements CategoryRepository {
     const prismaCategory = PrismaCategoryMapper.toPersistence(category);
 
     const data = await this.prisma.category.update({
-      where: { id: category.id },
+      where: { id: category.id, deletedAt: null },
       data: prismaCategory,
     });
 
@@ -53,7 +53,7 @@ export class PrismaCategoryRepository implements CategoryRepository {
     pagination: PaginationParams,
     sort: SortParams<string>,
   ): Promise<PaginatedResult<Category>> {
-    const whereClause: Prisma.CategoryWhereInput = {};
+    const whereClause: Prisma.CategoryWhereInput = { deletedAt: null };
 
     if (filters.query) {
       whereClause.OR = [
@@ -91,8 +91,34 @@ export class PrismaCategoryRepository implements CategoryRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.category.delete({
-      where: { id },
+    await this.prisma.$transaction(async (tx) => {
+      await tx.categoryOnProduct.deleteMany({
+        where: { categoryId: id },
+      });
+
+      await tx.category.updateMany({
+        where: { parentId: id, deletedAt: null },
+        data: { parentId: null },
+      });
+
+      const orphanedProducts = await tx.product.findMany({
+        where: {
+          categories: { none: {} },
+          deletedAt: null,
+        },
+      });
+
+      for (const product of orphanedProducts) {
+        await tx.product.update({
+          where: { id: product.id },
+          data: { deletedAt: new Date() },
+        });
+      }
+
+      await tx.category.update({
+        where: { id },
+        data: { deletedAt: new Date() },
+      });
     });
   }
 }

@@ -671,7 +671,7 @@ describe('ProductController (e2e)', () => {
   });
 
   describe('DELETE /product/:id', () => {
-    it('should delete existing product', async () => {
+    it('should soft delete product (GET returns 404 after delete)', async () => {
       const categoryResponse = await request(app.getHttpServer())
         .post('/category')
         .send({ name: 'Test Category' })
@@ -698,6 +698,43 @@ describe('ProductController (e2e)', () => {
       await request(app.getHttpServer())
         .get(`/product/${created.id}`)
         .expect(404);
+    });
+
+    it('should exclude soft deleted product from listing', async () => {
+      const catRes = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Test' })
+        .expect(201);
+      const cat = catRes.body as { id: string };
+
+      const res1 = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({ name: 'Keep', categoryIds: [cat.id] }),
+        )
+        .expect(201);
+
+      const res2 = await request(app.getHttpServer())
+        .post('/product')
+        .send(
+          getMockCreateProductBody({ name: 'Remove', categoryIds: [cat.id] }),
+        )
+        .expect(201);
+
+      const toDelete = res2.body as ProductResponse;
+
+      await request(app.getHttpServer())
+        .delete(`/product/${toDelete.id}`)
+        .expect(204);
+
+      const listResponse = await request(app.getHttpServer())
+        .get('/product')
+        .expect(200);
+
+      const body = listResponse.body as PaginatedProductResponse;
+      expect(body.data.map((p: ProductResponse) => p.id)).not.toContain(
+        toDelete.id,
+      );
     });
 
     it('should return 404 for non-existent ID', async () => {

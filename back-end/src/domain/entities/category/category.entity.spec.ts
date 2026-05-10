@@ -85,6 +85,21 @@ describe('Category', () => {
       expect(category.createdAt).toEqual(createdAt);
       expect(category.updatedAt).toEqual(updatedAt);
     });
+
+    it('should default deletedAt to null when not provided', () => {
+      const category = new Category(getMockCategoryProps());
+
+      expect(category.deletedAt).toBeNull();
+    });
+
+    it('should use provided deletedAt when passed', () => {
+      const deletedAt = new Date('2024-06-01');
+      const category = new Category(
+        getMockCategoryProps({ deletedAt }),
+      );
+
+      expect(category.deletedAt).toEqual(deletedAt);
+    });
   });
 
   describe('validateHierarchy', () => {

@@ -6,6 +6,7 @@ export interface ProductProps {
   description?: string | null;
   price: number;
   categoryIds: string[];
+  deletedAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -16,6 +17,7 @@ export class Product {
   private _description?: string | null;
   private _price!: number;
   private _categoryIds!: string[];
+  private _deletedAt?: Date | null;
   private _createdAt: Date;
   private _updatedAt: Date;
 
@@ -27,6 +29,7 @@ export class Product {
     this._description = props.description ?? null;
     this._price = props.price;
     this._categoryIds = props.categoryIds;
+    this._deletedAt = props.deletedAt ?? null;
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
   }
@@ -57,6 +60,10 @@ export class Product {
 
   get updatedAt() {
     return this._updatedAt;
+  }
+
+  get deletedAt() {
+    return this._deletedAt;
   }
 
   update(data: Partial<Omit<ProductProps, 'id'>>) {

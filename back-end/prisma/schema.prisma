@@ -22,6 +22,8 @@ model Category {
   parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children    Category[] @relation("CategoryHierarchy")
 
+  deletedAt   DateTime?
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -35,6 +37,8 @@ model Product {
   name        String
   description String?
   price       Float
+
+  deletedAt   DateTime?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

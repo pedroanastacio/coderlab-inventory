@@ -8,6 +8,7 @@ export class PrismaCategoryMapper {
       name: data.name,
       description: data.description,
       parentId: data.parentId,
+      deletedAt: data.deletedAt,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
@@ -19,6 +20,7 @@ export class PrismaCategoryMapper {
       name: category.name,
       description: category.description ?? null,
       parentId: category.parentId ?? null,
+      deletedAt: category.deletedAt ?? null,
       createdAt: category.createdAt,
       updatedAt: category.updatedAt,
     };

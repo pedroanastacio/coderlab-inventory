@@ -48,7 +48,7 @@ describe('DeleteCategoryUseCase', () => {
   });
 
   describe('execute', () => {
-    it('should delete category when exists', async () => {
+    it('should soft delete category when exists', async () => {
       const input = getMockDeleteCategoryInput({ id: 'category-123' });
 
       await useCase.execute(input);

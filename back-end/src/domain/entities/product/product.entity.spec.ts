@@ -82,6 +82,21 @@ describe('Product', () => {
       expect(product.createdAt).toEqual(createdAt);
       expect(product.updatedAt).toEqual(updatedAt);
     });
+
+    it('should default deletedAt to null when not provided', () => {
+      const product = new Product(getMockProductProps());
+
+      expect(product.deletedAt).toBeNull();
+    });
+
+    it('should use provided deletedAt when passed', () => {
+      const deletedAt = new Date('2025-06-01');
+      const product = new Product(
+        getMockProductProps({ deletedAt }),
+      );
+
+      expect(product.deletedAt).toEqual(deletedAt);
+    });
   });
 
   describe('Constructor Validation', () => {

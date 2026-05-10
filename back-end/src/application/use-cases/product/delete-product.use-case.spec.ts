@@ -64,7 +64,7 @@ describe('DeleteProductUseCase', () => {
   });
 
   describe('execute', () => {
-    it('should delete product when exists', async () => {
+    it('should soft delete product when exists', async () => {
       const input = getMockDeleteProductInput({ id: 'product-123' });
 
       await useCase.execute(input);

@@ -22,7 +22,8 @@ export class InMemoryCategoryRepository implements CategoryRepository {
   }
 
   async findById(id: string): Promise<Category | null> {
-    return Promise.resolve(this.categories.find((c) => c.id === id) ?? null);
+    const cat = this.categories.find((c) => c.id === id && !c.deletedAt);
+    return Promise.resolve(cat ?? null);
   }
 
   async update(category: Category): Promise<Category> {
@@ -39,7 +40,7 @@ export class InMemoryCategoryRepository implements CategoryRepository {
     pagination: PaginationParams,
     sort: SortParams<string>,
   ): Promise<PaginatedResult<Category>> {
-    let result = [...this.categories];
+    let result = this.categories.filter((c) => !c.deletedAt);
 
     if (filters.query) {
       const query = filters.query.toLowerCase();
@@ -89,7 +90,16 @@ export class InMemoryCategoryRepository implements CategoryRepository {
     if (index === -1) {
       throw new NotFoundError('Category not found');
     }
-    this.categories.splice(index, 1);
+    const existing = this.categories[index];
+    this.categories[index] = new Category({
+      id: existing.id,
+      name: existing.name,
+      description: existing.description,
+      parentId: existing.parentId,
+      deletedAt: new Date(),
+      createdAt: existing.createdAt,
+      updatedAt: existing.updatedAt,
+    });
     return Promise.resolve();
   }
 }
