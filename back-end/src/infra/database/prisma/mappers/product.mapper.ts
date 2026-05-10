@@ -13,26 +13,21 @@ export class PrismaProductMapper {
       description: data.description,
       price: data.price,
       categoryIds: data.categories?.map((c) => c.categoryId) ?? [],
+      deletedAt: data.deletedAt,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
   }
 
   static toPersistence(product: Product) {
-    const categoryConnections = product.categoryIds.map((categoryId) => ({
-      category: { connect: { id: categoryId } },
-    }));
-
     return {
       id: product.id,
       name: product.name,
       description: product.description ?? null,
       price: product.price,
+      deletedAt: product.deletedAt ?? null,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
-      categories: {
-        create: categoryConnections,
-      },
     };
   }
 }

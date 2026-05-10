@@ -34,10 +34,14 @@ describe('CategoryController (e2e)', () => {
   });
 
   beforeEach(async () => {
+    await prisma.categoryOnProduct.deleteMany();
+    await prisma.product.deleteMany();
     await prisma.category.deleteMany();
   });
 
   afterAll(async () => {
+    await prisma.categoryOnProduct.deleteMany();
+    await prisma.product.deleteMany();
     await prisma.category.deleteMany();
     await app.close();
   });
@@ -352,7 +356,7 @@ describe('CategoryController (e2e)', () => {
   });
 
   describe('DELETE /category/:id', () => {
-    it('should delete existing category', async () => {
+    it('should soft delete category (GET returns 404 after delete)', async () => {
       const createdResponse = await request(app.getHttpServer())
         .post('/category')
         .send({ name: 'To Delete' })
@@ -369,6 +373,58 @@ describe('CategoryController (e2e)', () => {
         .expect(404);
     });
 
+    it('should exclude soft deleted category from listing', async () => {
+      const res1 = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Keep' })
+        .expect(201);
+      const res2 = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Remove' })
+        .expect(201);
+
+      const toDelete = res2.body as CategoryResponse;
+
+      await request(app.getHttpServer())
+        .delete(`/category/${toDelete.id}`)
+        .expect(204);
+
+      const listResponse = await request(app.getHttpServer())
+        .get('/category')
+        .expect(200);
+
+      const body = listResponse.body as PaginatedCategoryResponse;
+      expect(body.data.map((c: CategoryResponse) => c.id)).not.toContain(
+        toDelete.id,
+      );
+    });
+
+    it('should orphan child categories when parent is deleted', async () => {
+      const parentRes = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Parent' })
+        .expect(201);
+      const parent = parentRes.body as CategoryResponse;
+
+      const childRes = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Child', parentId: parent.id })
+        .expect(201);
+      const child = childRes.body as CategoryResponse;
+      expect(child.parentId).toBe(parent.id);
+
+      await request(app.getHttpServer())
+        .delete(`/category/${parent.id}`)
+        .expect(204);
+
+      const getChild = await request(app.getHttpServer())
+        .get(`/category/${child.id}`)
+        .expect(200);
+
+      const childBody = getChild.body as CategoryResponse;
+      expect(childBody.parentId).toBeNull();
+    });
+
     it('should return 404 for non-existent ID', async () => {
       await request(app.getHttpServer())
         .delete('/category/00000000-0000-0000-0000-000000000000')
@@ -379,6 +435,66 @@ describe('CategoryController (e2e)', () => {
       await request(app.getHttpServer())
         .delete('/category/invalid-uuid')
         .expect(400);
+    });
+  });
+
+  describe('DELETE /category/:id cascade', () => {
+    it('should cascade soft delete product that belongs only to deleted category', async () => {
+      const catRes = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'To Delete' })
+        .expect(201);
+      const cat = catRes.body as CategoryResponse;
+
+      const prodRes = await request(app.getHttpServer())
+        .post('/product')
+        .send({
+          name: 'Orphan Product',
+          price: 50,
+          categoryIds: [cat.id],
+        })
+        .expect(201);
+      const prod = prodRes.body as { id: string };
+
+      await request(app.getHttpServer())
+        .delete(`/category/${cat.id}`)
+        .expect(204);
+
+      await request(app.getHttpServer())
+        .get(`/product/${prod.id}`)
+        .expect(404);
+    });
+
+    it('should NOT cascade soft delete product with multiple categories', async () => {
+      const catARes = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Category A' })
+        .expect(201);
+      const catA = catARes.body as CategoryResponse;
+
+      const catBRes = await request(app.getHttpServer())
+        .post('/category')
+        .send({ name: 'Category B' })
+        .expect(201);
+      const catB = catBRes.body as CategoryResponse;
+
+      const prodRes = await request(app.getHttpServer())
+        .post('/product')
+        .send({
+          name: 'Multi Category Product',
+          price: 100,
+          categoryIds: [catA.id, catB.id],
+        })
+        .expect(201);
+      const prod = prodRes.body as { id: string };
+
+      await request(app.getHttpServer())
+        .delete(`/category/${catA.id}`)
+        .expect(204);
+
+      await request(app.getHttpServer())
+        .get(`/product/${prod.id}`)
+        .expect(200);
     });
   });
 });

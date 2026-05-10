@@ -18,7 +18,14 @@ export class PrismaProductRepository implements ProductRepository {
     const data = PrismaProductMapper.toPersistence(product);
 
     const created = await this.prisma.product.create({
-      data,
+      data: {
+        ...data,
+        categories: {
+          create: product.categoryIds.map((categoryId) => ({
+            category: { connect: { id: categoryId } },
+          })),
+        },
+      },
       include: { categories: { include: { category: true } } },
     });
 
@@ -31,7 +38,7 @@ export class PrismaProductRepository implements ProductRepository {
       include: { categories: { include: { category: true } } },
     });
 
-    if (!data) {
+    if (!data || data.deletedAt) {
       return null;
     }
 
@@ -41,16 +48,20 @@ export class PrismaProductRepository implements ProductRepository {
   async update(product: Product): Promise<Product> {
     const data = PrismaProductMapper.toPersistence(product);
 
-    const updated = await this.prisma.$transaction(async (tx) => {
-      await tx.categoryOnProduct.deleteMany({
-        where: { productId: product.id },
-      });
-
-      return tx.product.update({
-        where: { id: product.id },
-        data,
-        include: { categories: { include: { category: true } } },
-      });
+    const updated = await this.prisma.product.update({
+      where: { id: product.id, deletedAt: null },
+      data: {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        categories: {
+          deleteMany: {},
+          create: product.categoryIds.map((categoryId) => ({
+            category: { connect: { id: categoryId } },
+          })),
+        },
+      },
+      include: { categories: { include: { category: true } } },
     });
 
     return PrismaProductMapper.toDomain(updated);
@@ -61,7 +72,7 @@ export class PrismaProductRepository implements ProductRepository {
     pagination: PaginationParams,
     sort: SortParams<string>,
   ): Promise<PaginatedResult<Product>> {
-    const whereClause: Record<string, unknown> = {};
+    const whereClause: Record<string, unknown> = { deletedAt: null };
 
     if (filters.query) {
       whereClause.OR = [
@@ -102,14 +113,9 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
-      await tx.categoryOnProduct.deleteMany({
-        where: { productId: id },
-      });
-
-      await tx.product.delete({
-        where: { id },
-      });
+    await this.prisma.product.update({
+      where: { id },
+      data: { deletedAt: new Date() },
     });
   }
 }
