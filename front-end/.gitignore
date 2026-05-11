@@ -25,3 +25,7 @@ dist-ssr
 
 # Generated API client
 src/api/generated/
+
+# Playwright test reports
+playwright-report/
+test-results/

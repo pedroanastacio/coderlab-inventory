@@ -4,7 +4,7 @@ import { CategoryForm } from '../components/CategoryForm';
 
 function CategoryEditPage({ id }: { id: string }) {
   const { data } = useCategoryControllerFindById(id);
-  return <CategoryForm category={data?.data} />;
+  return <CategoryForm key={id} category={data?.data} />;
 }
 
 export default function CategoryFormPage() {

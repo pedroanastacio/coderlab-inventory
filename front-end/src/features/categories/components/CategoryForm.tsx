@@ -51,7 +51,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
     const payload = {
       name: name.trim(),
       description: description || undefined,
-      parentId: parentId === 'none' ? undefined : parentId,
+      parentId: !parentId || parentId === 'none' ? undefined : parentId,
     };
 
     if (isEditing) {

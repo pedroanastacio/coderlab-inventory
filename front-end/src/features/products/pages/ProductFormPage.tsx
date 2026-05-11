@@ -4,7 +4,7 @@ import { ProductForm } from '../components/ProductForm';
 
 function ProductEditPage({ id }: { id: string }) {
   const { data } = useProductControllerFindById(id);
-  return <ProductForm product={data?.data} />;
+  return <ProductForm key={id} product={data?.data} />;
 }
 
 export default function ProductFormPage() {
