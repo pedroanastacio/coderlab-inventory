@@ -78,7 +78,7 @@ export function ProductForm({ product }: ProductFormProps) {
   };
 
   const isPending = createMutation.isPending || updateMutation.isPending;
-  const categories = categoriesData?.data?.data ?? [];
+  const categories = (categoriesData?.data?.data ?? []) as Array<{ id: string; name: string }>;
 
   return (
     <Card className="max-w-2xl">
