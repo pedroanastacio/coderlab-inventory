@@ -1,15 +1,18 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { CategoryTable } from '../components/CategoryTable';
+import { CategoryFormDialog } from '../components/CategoryFormDialog';
 import { useCategoryControllerFindAll } from '@/api/generated/category/category';
 import { useDebounce } from '@/hooks/useDebounce';
+import type { CategoryResponseDto } from '@/api/generated/model';
 
 export default function CategoryListPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editCategory, setEditCategory] = useState<CategoryResponseDto | null>(null);
   const debouncedSearch = useDebounce(search, 300);
 
   const { data } = useCategoryControllerFindAll({
@@ -22,9 +25,9 @@ export default function CategoryListPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Categorias</h1>
-        <Link to="/categories/new">
-          <Button><Plus className="mr-2 h-4 w-4" />Nova Categoria</Button>
-        </Link>
+        <Button onClick={() => setCreateOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />Nova Categoria
+        </Button>
       </div>
       <Input
         placeholder="Buscar por nome..."
@@ -37,6 +40,16 @@ export default function CategoryListPage() {
         pagination={data?.data?.pagination}
         page={page}
         onPageChange={setPage}
+        onEdit={(category) => setEditCategory(category)}
+      />
+      <CategoryFormDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+      />
+      <CategoryFormDialog
+        open={!!editCategory}
+        onOpenChange={(open) => { if (!open) setEditCategory(null); }}
+        editCategory={editCategory ?? undefined}
       />
     </div>
   );
