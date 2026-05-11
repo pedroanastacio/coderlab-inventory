@@ -76,15 +76,23 @@ export function ProductTable({ data, pagination, page, onPageChange }: ProductTa
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+            {table.getRowModel().rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center text-muted-foreground py-8">
+                  Nenhum produto encontrado
+                </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
