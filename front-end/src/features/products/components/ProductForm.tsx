@@ -98,7 +98,7 @@ export function ProductForm({ product }: ProductFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="price">Preço</Label>
-            <Input id="price" type="number" step="0.01" min="0" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
+            <Input id="price" type="number" step="0.01" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
             {errors.price && <p className="text-sm text-destructive">{errors.price}</p>}
           </div>
           <div className="space-y-2">

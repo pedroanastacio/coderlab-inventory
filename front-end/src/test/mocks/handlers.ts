@@ -37,15 +37,15 @@ export const handlers = [
   }),
 
   http.post('*/product', async ({ request }) => {
-    const body = (await request.json()) as any
+    const body = (await request.json()) as Record<string, unknown>
     const id = String(db.nextProductId++)
     const now = new Date().toISOString()
     const product: ProductResponseDto = {
       id,
-      name: body.name,
-      description: body.description ?? null,
-      price: body.price,
-      categoryIds: body.categoryIds ?? [],
+      name: body.name as string,
+      description: (body.description as string | null) ?? null,
+      price: body.price as number,
+      categoryIds: (body.categoryIds as string[]) ?? [],
       createdAt: now,
       updatedAt: now,
     }
@@ -54,12 +54,12 @@ export const handlers = [
   }),
 
   http.patch('*/product/:id', async ({ params, request }) => {
-    const body = (await request.json()) as any
+    const body = (await request.json()) as Record<string, unknown>
     const existing = db.products.get(params.id as string)
     if (!existing) return new HttpResponse(null, { status: 404 })
     const updated: ProductResponseDto = {
       ...existing,
-      ...body,
+      ...(body as Partial<ProductResponseDto>),
       updatedAt: new Date().toISOString(),
     }
     db.products.set(params.id as string, updated)
@@ -91,14 +91,14 @@ export const handlers = [
   }),
 
   http.post('*/category', async ({ request }) => {
-    const body = (await request.json()) as any
+    const body = (await request.json()) as Record<string, unknown>
     const id = String(db.nextCategoryId++)
     const now = new Date().toISOString()
     const category: CategoryResponseDto = {
       id,
-      name: body.name,
-      description: body.description ?? null,
-      parentId: body.parentId ?? null,
+      name: body.name as string,
+      description: (body.description as string | null) ?? null,
+      parentId: (body.parentId as string | null) ?? null,
       createdAt: now,
       updatedAt: now,
     }
@@ -107,12 +107,12 @@ export const handlers = [
   }),
 
   http.patch('*/category/:id', async ({ params, request }) => {
-    const body = (await request.json()) as any
+    const body = (await request.json()) as Record<string, unknown>
     const existing = db.categories.get(params.id as string)
     if (!existing) return new HttpResponse(null, { status: 404 })
     const updated: CategoryResponseDto = {
       ...existing,
-      ...body,
+      ...(body as Partial<CategoryResponseDto>),
       updatedAt: new Date().toISOString(),
     }
     db.categories.set(params.id as string, updated)
