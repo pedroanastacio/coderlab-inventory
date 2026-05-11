@@ -20,9 +20,11 @@ import type { CategoryResponseDto } from '@/api/generated/model';
 
 interface CategoryFormProps {
   category?: CategoryResponseDto;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export function CategoryForm({ category }: CategoryFormProps) {
+export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEditing = !!category;
@@ -61,7 +63,11 @@ export function CategoryForm({ category }: CategoryFormProps) {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['/category'] });
             toast.success('Categoria atualizada com sucesso');
-            navigate('/categories');
+            if (onSuccess) {
+              onSuccess();
+            } else {
+              navigate('/categories');
+            }
           },
           onError: (error) => toast.error(error.message ?? 'Erro ao atualizar categoria'),
         },
@@ -73,7 +79,11 @@ export function CategoryForm({ category }: CategoryFormProps) {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['/category'] });
             toast.success('Categoria criada com sucesso');
-            navigate('/categories');
+            if (onSuccess) {
+              onSuccess();
+            } else {
+              navigate('/categories');
+            }
           },
           onError: (error) => toast.error(error.message ?? 'Erro ao criar categoria'),
         },
@@ -121,7 +131,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
             <Button type="submit" disabled={isPending}>
               {isPending ? 'Salvando...' : isEditing ? 'Atualizar' : 'Criar'}
             </Button>
-            <Button variant="outline" type="button" onClick={() => navigate('/categories')}>
+            <Button variant="outline" type="button" onClick={() => onCancel ? onCancel() : navigate('/categories')}>
               Cancelar
             </Button>
           </div>
