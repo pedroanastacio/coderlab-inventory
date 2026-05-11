@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/test-utils'
 import { buildProduct } from '@/test/factories/product'
 import { ProductTable } from '../components/ProductTable'
@@ -22,6 +23,16 @@ describe('ProductTable', () => {
       <ProductTable data={[]} page={1} onPageChange={vi.fn()} />,
     )
     expect(screen.getByText(/nenhum produto encontrado/i)).toBeInTheDocument()
+  })
+
+  it('calls onEdit when edit button is clicked', async () => {
+    const onEdit = vi.fn()
+    const user = userEvent.setup()
+    renderWithProviders(
+      <ProductTable data={[mockProducts[0]]} page={1} onPageChange={vi.fn()} onEdit={onEdit} />,
+    )
+    await user.click(screen.getByRole('button', { name: /editar/i }))
+    expect(onEdit).toHaveBeenCalledWith(mockProducts[0])
   })
 
   it('renders pagination when pagination prop is provided', () => {

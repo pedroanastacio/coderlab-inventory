@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -28,9 +28,10 @@ interface ProductTableProps {
   pagination?: PaginatedResponseDtoPagination;
   page: number;
   onPageChange: (page: number) => void;
+  onEdit?: (product: ProductResponseDto) => void;
 }
 
-export function ProductTable({ data, pagination, page, onPageChange }: ProductTableProps) {
+export function ProductTable({ data, pagination, page, onPageChange, onEdit }: ProductTableProps) {
   const columns = useMemo(() => [
     columnHelper.accessor('name', {
       header: 'Nome',
@@ -45,9 +46,14 @@ export function ProductTable({ data, pagination, page, onPageChange }: ProductTa
       header: 'Ações',
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Link to={`/products/${row.original.id}/edit`}>
-            <Button variant="ghost" size="icon"><Pencil className="h-4 w-4" /></Button>
-          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Editar produto"
+            onClick={() => onEdit?.(row.original)}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
           <DeleteProductDialog productId={row.original.id} productName={row.original.name} />
         </div>
       ),
