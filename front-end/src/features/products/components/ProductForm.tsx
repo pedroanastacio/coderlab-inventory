@@ -13,9 +13,11 @@ import type { ProductResponseDto } from '@/api/generated/model';
 
 interface ProductFormProps {
   product?: ProductResponseDto;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export function ProductForm({ product }: ProductFormProps) {
+export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEditing = !!product;
@@ -57,7 +59,11 @@ export function ProductForm({ product }: ProductFormProps) {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['/product'] });
             toast.success('Produto atualizado com sucesso');
-            navigate('/products');
+            if (onSuccess) {
+              onSuccess();
+            } else {
+              navigate('/products');
+            }
           },
           onError: (error) => toast.error(error.message ?? 'Erro ao atualizar produto'),
         },
@@ -69,7 +75,11 @@ export function ProductForm({ product }: ProductFormProps) {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['/product'] });
             toast.success('Produto criado com sucesso');
-            navigate('/products');
+            if (onSuccess) {
+              onSuccess();
+            } else {
+              navigate('/products');
+            }
           },
           onError: (error) => toast.error(error.message ?? 'Erro ao criar produto'),
         },
@@ -127,7 +137,7 @@ export function ProductForm({ product }: ProductFormProps) {
             <Button type="submit" disabled={isPending}>
               {isPending ? 'Salvando...' : isEditing ? 'Atualizar' : 'Criar'}
             </Button>
-            <Button variant="outline" type="button" onClick={() => navigate('/products')}>
+            <Button variant="outline" type="button" onClick={() => onCancel ? onCancel() : navigate('/products')}>
               Cancelar
             </Button>
           </div>
