@@ -60,7 +60,7 @@ test.describe('Products', () => {
 
   test('edits a product', async ({ page }) => {
     await page.goto('/products')
-    const editButton = page.locator('a[href*="edit"]').first()
+    const editButton = page.getByRole('button', { name: 'Editar produto' }).first()
     await editButton.click()
     await page.waitForSelector('input#name')
     await page.fill('input#name', `E2E Product ${uniqueId} Updated`)

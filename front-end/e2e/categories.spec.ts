@@ -35,7 +35,7 @@ test.describe('Categories', () => {
 
   test('edits a category', async ({ page }) => {
     await page.goto('/categories')
-    const editButton = page.locator('a[href*="edit"]').first()
+    const editButton = page.getByRole('button', { name: 'Editar categoria' }).first()
     await editButton.click()
     await page.waitForSelector('input#name')
     await page.fill('input#name', `E2E Category ${uniqueId} Updated`)
@@ -44,7 +44,8 @@ test.describe('Categories', () => {
   })
 
   test('shows validation error on empty form', async ({ page }) => {
-    await page.goto('/categories/new')
+    await page.goto('/categories')
+    await page.click('text=Nova Categoria')
     await page.click('button:has-text("Criar")')
     await expect(page.getByText('Nome é obrigatório')).toBeVisible({ timeout: 5000 })
   })
