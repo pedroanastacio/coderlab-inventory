@@ -51,7 +51,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
     const payload = {
       name: name.trim(),
       description: description || undefined,
-      parentId: parentId || undefined,
+      parentId: parentId === 'none' ? undefined : parentId,
     };
 
     if (isEditing) {
@@ -107,7 +107,7 @@ export function CategoryForm({ category }: CategoryFormProps) {
                 <SelectValue placeholder="Nenhuma (categoria raiz)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Nenhuma (categoria raiz)</SelectItem>
+                <SelectItem value="none">Nenhuma (categoria raiz)</SelectItem>
                 {categories
                   .filter((cat) => cat.id !== category?.id)
                   .map((cat) => (
