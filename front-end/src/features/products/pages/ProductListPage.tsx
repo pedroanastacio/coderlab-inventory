@@ -5,13 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { ProductTable } from '../components/ProductTable';
 import { useProductControllerFindAll } from '@/api/generated/product/product';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function ProductListPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const debouncedSearch = useDebounce(search, 300);
 
   const { data } = useProductControllerFindAll({
-    query: search || undefined,
+    query: debouncedSearch || undefined,
     page,
     perPage: 10,
   });

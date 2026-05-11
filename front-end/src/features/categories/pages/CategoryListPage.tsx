@@ -5,13 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { CategoryTable } from '../components/CategoryTable';
 import { useCategoryControllerFindAll } from '@/api/generated/category/category';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function CategoryListPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const debouncedSearch = useDebounce(search, 300);
 
   const { data } = useCategoryControllerFindAll({
-    query: search || undefined,
+    query: debouncedSearch || undefined,
     page,
     perPage: 10,
   });
