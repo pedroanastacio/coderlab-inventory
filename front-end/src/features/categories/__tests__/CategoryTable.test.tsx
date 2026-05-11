@@ -1,4 +1,5 @@
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { renderWithProviders } from '@/test/test-utils'
 import { buildCategory } from '@/test/factories/category'
 import { CategoryTable } from '../components/CategoryTable'
@@ -29,5 +30,15 @@ describe('CategoryTable', () => {
       <CategoryTable data={[]} page={1} onPageChange={vi.fn()} />,
     )
     expect(screen.getByText(/nenhuma categoria encontrada/i)).toBeInTheDocument()
+  })
+
+  it('calls onEdit when edit button is clicked', async () => {
+    const onEdit = vi.fn()
+    const user = userEvent.setup()
+    renderWithProviders(
+      <CategoryTable data={[mockCategories[0]]} page={1} onPageChange={vi.fn()} onEdit={onEdit} />,
+    )
+    await user.click(screen.getByRole('button', { name: /editar/i }))
+    expect(onEdit).toHaveBeenCalledWith(mockCategories[0])
   })
 })

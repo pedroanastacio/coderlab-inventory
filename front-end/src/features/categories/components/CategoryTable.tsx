@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import {
   useReactTable,
   getCoreRowModel,
@@ -28,9 +27,10 @@ interface CategoryTableProps {
   pagination?: PaginatedResponseDtoPagination;
   page: number;
   onPageChange: (page: number) => void;
+  onEdit?: (category: CategoryResponseDto) => void;
 }
 
-export function CategoryTable({ data, pagination, page, onPageChange }: CategoryTableProps) {
+export function CategoryTable({ data, pagination, page, onPageChange, onEdit }: CategoryTableProps) {
   const columns = useMemo(() => [
     columnHelper.accessor('name', {
       header: 'Nome',
@@ -44,9 +44,14 @@ export function CategoryTable({ data, pagination, page, onPageChange }: Category
       header: 'Ações',
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Link to={`/categories/${row.original.id}/edit`}>
-            <Button variant="ghost" size="icon"><Pencil className="h-4 w-4" /></Button>
-          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Editar categoria"
+            onClick={() => onEdit?.(row.original)}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
           <DeleteCategoryDialog categoryId={row.original.id} categoryName={row.original.name} />
         </div>
       ),
