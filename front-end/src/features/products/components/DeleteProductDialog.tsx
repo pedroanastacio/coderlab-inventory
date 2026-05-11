@@ -43,7 +43,7 @@ export function DeleteProductDialog({ productId, productName }: DeleteProductDia
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+        <Button variant="ghost" size="icon" aria-label="Excluir produto"><Trash2 className="h-4 w-4 text-destructive" /></Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
