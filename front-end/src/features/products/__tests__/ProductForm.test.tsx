@@ -6,6 +6,14 @@ import { buildCategory } from '@/test/factories/category'
 import { buildProduct } from '@/test/factories/product'
 import { ProductForm } from '../components/ProductForm'
 
+async function selectCategory(user: ReturnType<typeof userEvent.setup>, name: string) {
+  const trigger = screen.getByRole('combobox')
+  await user.click(trigger)
+  const option = await screen.findByText(name)
+  await user.click(option)
+  await user.keyboard('{Escape}')
+}
+
 describe('ProductForm', () => {
   beforeEach(() => {
     db.reset()
@@ -42,7 +50,7 @@ describe('ProductForm', () => {
 
     await user.type(screen.getByLabelText(/nome/i), 'New Product')
     await user.type(screen.getByLabelText(/preço/i), '150')
-    await user.click(screen.getByText('Electronics'))
+    await selectCategory(user, 'Electronics')
     await user.click(screen.getByRole('button', { name: /criar/i }))
 
     await waitFor(() => {
