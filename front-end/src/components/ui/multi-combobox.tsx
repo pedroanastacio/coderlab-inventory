@@ -108,16 +108,23 @@ export function MultiCombobox({
               return cat ? (
                 <Badge key={cat.id} variant="secondary" className="gap-1">
                   {cat.name}
-                  <button
-                    type="button"
+                  <span
+                    role="button"
+                    tabIndex={0}
                     className="ml-0.5 cursor-pointer rounded-full outline-none hover:bg-muted"
                     onClick={(e) => {
                       e.stopPropagation()
                       handleToggle(cat.id)
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        handleToggle(cat.id)
+                      }
+                    }}
                   >
                     <XIcon className="size-3" />
-                  </button>
+                  </span>
                 </Badge>
               ) : null
             })}
