@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProductControllerCreate, useProductControllerUpdate } from '@/api/generated/product/product';
-import { useCategoryControllerFindAll } from '@/api/generated/category/category';
+import { MultiCombobox } from '@/components/ui/multi-combobox';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { ProductResponseDto } from '@/api/generated/model';
@@ -30,7 +30,6 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
 
   const createMutation = useProductControllerCreate();
   const updateMutation = useProductControllerUpdate();
-  const { data: categoriesData } = useCategoryControllerFindAll({});
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -88,7 +87,6 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
   };
 
   const isPending = createMutation.isPending || updateMutation.isPending;
-  const categories = (categoriesData?.data?.data ?? []) as Array<{ id: string; name: string }>;
 
   return (
     <Card className="max-w-2xl">
@@ -113,24 +111,11 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
           </div>
           <div className="space-y-2">
             <Label>Categorias</Label>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <label key={cat.id} className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={selectedCategories.includes(cat.id)}
-                    onChange={(e) => {
-                      setSelectedCategories((prev) =>
-                        e.target.checked
-                          ? [...prev, cat.id]
-                          : prev.filter((id) => id !== cat.id),
-                      );
-                    }}
-                  />
-                  {cat.name}
-                </label>
-              ))}
-            </div>
+            <MultiCombobox
+              selected={selectedCategories}
+              onChange={setSelectedCategories}
+              placeholder="Buscar categorias..."
+            />
             {errors.categories && <p className="text-sm text-destructive">{errors.categories}</p>}
           </div>
           <div className="flex gap-2">
