@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCategoryControllerCreate, useCategoryControllerUpdate } from '@/api/generated/category/category';
 import { useCategoryControllerFindAll } from '@/api/generated/category/category';
 import { useQueryClient } from '@tanstack/react-query';
@@ -95,48 +94,41 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
   const categories = (categoriesData?.data?.data ?? []) as Array<{ id: string; name: string }>;
 
   return (
-    <Card className="max-w-2xl">
-      <CardHeader>
-        <CardTitle>{isEditing ? 'Editar Categoria' : 'Nova Categoria'}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Nome</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-            {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="description">Descrição</Label>
-            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="parentId">Categoria Pai</Label>
-            <Select value={parentId} onValueChange={setParentId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Nenhuma (categoria raiz)" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Nenhuma (categoria raiz)</SelectItem>
-                {categories
-                  .filter((cat) => cat.id !== category?.id)
-                  .map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-            {errors.parentId && <p className="text-sm text-destructive">{errors.parentId}</p>}
-          </div>
-          <div className="flex gap-2">
-            <Button type="submit" disabled={isPending}>
-              {isPending ? 'Salvando...' : isEditing ? 'Atualizar' : 'Criar'}
-            </Button>
-            <Button variant="outline" type="button" onClick={() => onCancel ? onCancel() : navigate('/categories')}>
-              Cancelar
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="name">Nome</Label>
+        <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+        {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="description">Descrição</Label>
+        <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="parentId">Categoria Pai</Label>
+        <Select value={parentId} onValueChange={setParentId}>
+          <SelectTrigger>
+            <SelectValue placeholder="Nenhuma (categoria raiz)" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">Nenhuma (categoria raiz)</SelectItem>
+            {categories
+              .filter((cat) => cat.id !== category?.id)
+              .map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+        {errors.parentId && <p className="text-sm text-destructive">{errors.parentId}</p>}
+      </div>
+      <div className="flex gap-2">
+        <Button type="submit" disabled={isPending}>
+          {isPending ? 'Salvando...' : isEditing ? 'Atualizar' : 'Criar'}
+        </Button>
+        <Button variant="outline" type="button" onClick={() => onCancel ? onCancel() : navigate('/categories')}>
+          Cancelar
+        </Button>
+      </div>
+    </form>
   );
 }
