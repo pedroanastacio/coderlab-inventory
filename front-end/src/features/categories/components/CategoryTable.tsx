@@ -35,9 +35,10 @@ export function CategoryTable({ data, pagination, page, onPageChange, onEdit }: 
     columnHelper.accessor('name', {
       header: 'Nome',
     }),
-    columnHelper.accessor('description', {
-      header: 'Descrição',
-      cell: (info) => info.getValue() ?? '-',
+    columnHelper.accessor((row) => row.parent?.name ?? '-', {
+      id: 'parent',
+      header: 'Categoria Pai',
+      cell: (info) => info.getValue(),
     }),
     columnHelper.display({
       id: 'actions',

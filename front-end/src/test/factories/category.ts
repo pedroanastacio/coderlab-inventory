@@ -7,6 +7,7 @@ export function buildCategory(overrides?: Partial<CategoryResponseDto>): Categor
     id,
     name: `Category ${id}`,
     description: `Description for category ${id}`,
+    parent: null,
     parentId: null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

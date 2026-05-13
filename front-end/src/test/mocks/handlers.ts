@@ -98,6 +98,7 @@ export const handlers = [
       id,
       name: body.name as string,
       description: (body.description as string | null) ?? null,
+      parent: null,
       parentId: (body.parentId as string | null) ?? null,
       createdAt: now,
       updatedAt: now,
