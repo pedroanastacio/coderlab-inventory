@@ -208,5 +208,21 @@ describe('FindAllCategoriesUseCase', () => {
         pageCount: 1,
       });
     });
+
+    it('should include parent on categories when parentId is set', async () => {
+      const parent = await createCategoryInMemory(repository, { name: 'Electronics' });
+      const child = await createCategoryInMemory(repository, {
+        name: 'Smartphones',
+        parentId: parent.id,
+      });
+
+      const input = getMockFindAllCategoriesInput();
+      const result = await useCase.execute(input);
+
+      const childResult = result.data.find((c) => c.id === child.id);
+      expect(childResult?.parent).toBeDefined();
+      expect(childResult?.parent?.name).toBe('Electronics');
+      expect(childResult?.parent?.id).toBe(parent.id);
+    });
   });
 });
