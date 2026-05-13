@@ -31,5 +31,20 @@ services:
     env_file:
       - ./back-end/.env
 
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    command: pnpm dev
+    volumes:
+      - ./front-end:/app
+      - /app/node_modules
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - backend
+
 volumes:
   pgdata:
