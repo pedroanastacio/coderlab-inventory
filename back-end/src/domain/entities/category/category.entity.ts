@@ -5,6 +5,7 @@ export interface CategoryProps {
   name: string;
   description?: string | null;
   parentId?: string | null;
+  parent?: Category | null;
   deletedAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
@@ -15,6 +16,7 @@ export class Category {
   private _name!: string;
   private _description?: string | null;
   private _parentId?: string | null;
+  private _parent?: Category | null;
   private _deletedAt?: Date | null;
   private _createdAt: Date;
   private _updatedAt: Date;
@@ -26,6 +28,7 @@ export class Category {
     this._name = props.name;
     this._description = props.description ?? null;
     this._parentId = props.parentId ?? null;
+    this._parent = props.parent ?? null;
     this._deletedAt = props.deletedAt ?? null;
     this._createdAt = props.createdAt ?? new Date();
     this._updatedAt = props.updatedAt ?? new Date();
@@ -45,6 +48,10 @@ export class Category {
 
   get parentId() {
     return this._parentId;
+  }
+
+  get parent() {
+    return this._parent;
   }
 
   get createdAt() {

@@ -28,6 +28,7 @@ export class PrismaCategoryRepository implements CategoryRepository {
   async findById(id: string): Promise<Category | null> {
     const data = await this.prisma.category.findUnique({
       where: { id },
+      include: { parent: true },
     });
 
     if (!data || data.deletedAt) {
@@ -75,6 +76,7 @@ export class PrismaCategoryRepository implements CategoryRepository {
       orderBy: {
         [sort.sortBy]: sort.sortOrder,
       },
+      include: { parent: true },
     });
 
     const categories = data.map((c) => PrismaCategoryMapper.toDomain(c));

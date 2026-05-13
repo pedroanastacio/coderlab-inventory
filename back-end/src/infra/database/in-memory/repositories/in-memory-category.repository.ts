@@ -21,9 +21,25 @@ export class InMemoryCategoryRepository implements CategoryRepository {
     return Promise.resolve(category);
   }
 
+  private resolveParent(cat: Category): Category {
+    if (!cat.parentId) return cat;
+    const parent = this.categories.find((c) => c.id === cat.parentId && !c.deletedAt);
+    return new Category({
+      id: cat.id,
+      name: cat.name,
+      description: cat.description,
+      parentId: cat.parentId,
+      parent: parent ?? null,
+      deletedAt: cat.deletedAt,
+      createdAt: cat.createdAt,
+      updatedAt: cat.updatedAt,
+    });
+  }
+
   async findById(id: string): Promise<Category | null> {
     const cat = this.categories.find((c) => c.id === id && !c.deletedAt);
-    return Promise.resolve(cat ?? null);
+    if (!cat) return null;
+    return Promise.resolve(this.resolveParent(cat));
   }
 
   async update(category: Category): Promise<Category> {
@@ -68,7 +84,8 @@ export class InMemoryCategoryRepository implements CategoryRepository {
     });
 
     const start = (pagination.page - 1) * pagination.perPage;
-    const data = result.slice(start, start + pagination.perPage);
+    const sliced = result.slice(start, start + pagination.perPage);
+    const data = sliced.map((c) => this.resolveParent(c));
 
     return Promise.resolve({
       data,
