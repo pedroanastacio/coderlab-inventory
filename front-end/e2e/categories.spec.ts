@@ -1,7 +1,9 @@
 import { test, expect, request as apiRequest } from '@playwright/test'
 
+const API_URL = process.env.VITE_E2E_API_URL || 'http://localhost:3000';
+
 async function cleanupOldTestData() {
-  const api = await apiRequest.newContext({ baseURL: 'http://localhost:3000' })
+  const api = await apiRequest.newContext({ baseURL: API_URL })
   const catRes = await api.get('/category?perPage=100')
   const catData = await catRes.json()
   const oldCategories = (catData?.data ?? []).filter(
@@ -17,7 +19,7 @@ test.describe('Categories', () => {
 
   test.beforeAll(async ({ request }) => {
     await cleanupOldTestData()
-    const res = await request.post('http://localhost:3000/category', {
+    const res = await request.post(`${API_URL}/category`, {
       data: { name: `E2E Category Seed ${uniqueId}` },
     })
     if (!res.ok()) {

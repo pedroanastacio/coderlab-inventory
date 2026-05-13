@@ -12,6 +12,7 @@ export default defineConfig({
   },
   server: {
     host: true,
+    port: Number(process.env.VITE_PORT) || 5173,
     watch: {
       usePolling: process.env.CHOKIDAR_USEPOLLING === 'true',
     },
