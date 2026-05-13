@@ -12,7 +12,7 @@ export function Header() {
   return (
     <header className="border-b">
       <div className="max-w-7xl mx-auto flex items-center gap-6 h-14 px-4">
-        <Link to="/" className="font-bold text-lg">Coderlab Inventory</Link>
+        <Link to="/" className="font-bold text-lg">{import.meta.env.VITE_APP_NAME || 'Coderlab Inventory'}</Link>
         <nav className="flex gap-4">
           {navItems.map(({ to, label }) => (
             <Link

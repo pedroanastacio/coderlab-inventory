@@ -1,9 +1,11 @@
 import { defineConfig } from 'orval';
 
+const apiUrl = process.env.VITE_API_URL || 'http://localhost:3000';
+
 export default defineConfig({
   api: {
     input: {
-      target: 'http://localhost:3000/api-json',
+      target: `${apiUrl}/api-json`,
     },
     output: {
       mode: 'tags-split',
