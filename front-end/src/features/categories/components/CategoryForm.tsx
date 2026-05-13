@@ -51,8 +51,8 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
 
     const payload = {
       name: name.trim(),
-      description: description || undefined,
-      parentId: !parentId || parentId === 'none' ? undefined : parentId,
+      description: description || null,
+      parentId: !parentId || parentId === 'none' ? null : parentId,
     };
 
     if (isEditing) {

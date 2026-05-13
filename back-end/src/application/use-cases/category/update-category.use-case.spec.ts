@@ -81,6 +81,98 @@ describe('UpdateCategoryUseCase', () => {
       expect(result.description).toBe('New description');
     });
 
+    it('should clear category description when set to null', async () => {
+      await repository.update(
+        new Category({
+          id: 'category-123',
+          name: 'Electronics',
+          description: 'Existing description',
+          parentId: null,
+        }),
+      );
+
+      const input = getMockUpdateCategoryInput({
+        id: 'category-123',
+        data: { description: null },
+      });
+
+      const result = await useCase.execute(input);
+
+      expect(result.description).toBeNull();
+    });
+
+    it('should preserve existing description when not provided (undefined)', async () => {
+      await repository.update(
+        new Category({
+          id: 'category-123',
+          name: 'Electronics',
+          description: 'Existing description',
+          parentId: null,
+        }),
+      );
+
+      const input = getMockUpdateCategoryInput({
+        id: 'category-123',
+        data: { name: 'Updated Name' },
+      });
+
+      const result = await useCase.execute(input);
+
+      expect(result.name).toBe('Updated Name');
+      expect(result.description).toBe('Existing description');
+    });
+
+    it('should clear parentId when set to null', async () => {
+      const parent = await createCategoryInMemory(repository, {
+        id: 'parent-category',
+        name: 'Parent Category',
+      });
+
+      await repository.update(
+        new Category({
+          id: 'category-123',
+          name: 'Electronics',
+          description: null,
+          parentId: parent.id,
+        }),
+      );
+
+      const input = getMockUpdateCategoryInput({
+        id: 'category-123',
+        data: { parentId: null },
+      });
+
+      const result = await useCase.execute(input);
+
+      expect(result.parentId).toBeNull();
+    });
+
+    it('should preserve existing parentId when not provided (undefined)', async () => {
+      const parent = await createCategoryInMemory(repository, {
+        id: 'parent-category',
+        name: 'Parent Category',
+      });
+
+      await repository.update(
+        new Category({
+          id: 'category-123',
+          name: 'Electronics',
+          description: null,
+          parentId: parent.id,
+        }),
+      );
+
+      const input = getMockUpdateCategoryInput({
+        id: 'category-123',
+        data: { name: 'Updated Name' },
+      });
+
+      const result = await useCase.execute(input);
+
+      expect(result.name).toBe('Updated Name');
+      expect(result.parentId).toBe(parent.id);
+    });
+
     it('should throw NotFoundError when category does not exist', async () => {
       const input = getMockUpdateCategoryInput({
         id: 'non-existent',

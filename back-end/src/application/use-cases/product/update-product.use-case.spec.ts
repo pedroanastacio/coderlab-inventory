@@ -86,6 +86,29 @@ describe('UpdateProductUseCase', () => {
       expect(result.description).toBe('New description');
     });
 
+    it('should clear product description when set to null', async () => {
+      const input = getMockUpdateProductInput({
+        id: 'product-123',
+        data: { description: null },
+      });
+
+      const result = await useCase.execute(input);
+
+      expect(result.description).toBeNull();
+    });
+
+    it('should preserve existing description when not provided (undefined)', async () => {
+      const input = getMockUpdateProductInput({
+        id: 'product-123',
+        data: { name: 'Updated Product' },
+      });
+
+      const result = await useCase.execute(input);
+
+      expect(result.name).toBe('Updated Product');
+      expect(result.description).toBe('Original description');
+    });
+
     it('should update product price', async () => {
       const input = getMockUpdateProductInput({
         id: 'product-123',

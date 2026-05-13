@@ -45,7 +45,7 @@ export function ProductForm({ product, onSuccess, onCancel }: ProductFormProps) 
 
     const payload = {
       name: name.trim(),
-      description: description || undefined,
+      description: description || null,
       price,
       categoryIds: selectedCategories,
     };

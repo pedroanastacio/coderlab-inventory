@@ -91,9 +91,7 @@ describe('Product', () => {
 
     it('should use provided deletedAt when passed', () => {
       const deletedAt = new Date('2025-06-01');
-      const product = new Product(
-        getMockProductProps({ deletedAt }),
-      );
+      const product = new Product(getMockProductProps({ deletedAt }));
 
       expect(product.deletedAt).toEqual(deletedAt);
     });
