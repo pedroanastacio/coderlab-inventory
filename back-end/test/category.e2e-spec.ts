@@ -460,9 +460,7 @@ describe('CategoryController (e2e)', () => {
         .delete(`/category/${cat.id}`)
         .expect(204);
 
-      await request(app.getHttpServer())
-        .get(`/product/${prod.id}`)
-        .expect(404);
+      await request(app.getHttpServer()).get(`/product/${prod.id}`).expect(404);
     });
 
     it('should NOT cascade soft delete product with multiple categories', async () => {
@@ -492,9 +490,7 @@ describe('CategoryController (e2e)', () => {
         .delete(`/category/${catA.id}`)
         .expect(204);
 
-      await request(app.getHttpServer())
-        .get(`/product/${prod.id}`)
-        .expect(200);
+      await request(app.getHttpServer()).get(`/product/${prod.id}`).expect(200);
     });
   });
 });

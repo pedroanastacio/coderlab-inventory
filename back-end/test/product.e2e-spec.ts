@@ -709,9 +709,7 @@ describe('ProductController (e2e)', () => {
 
       const res1 = await request(app.getHttpServer())
         .post('/product')
-        .send(
-          getMockCreateProductBody({ name: 'Keep', categoryIds: [cat.id] }),
-        )
+        .send(getMockCreateProductBody({ name: 'Keep', categoryIds: [cat.id] }))
         .expect(201);
 
       const res2 = await request(app.getHttpServer())

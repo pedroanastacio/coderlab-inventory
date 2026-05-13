@@ -94,9 +94,7 @@ describe('Category', () => {
 
     it('should use provided deletedAt when passed', () => {
       const deletedAt = new Date('2024-06-01');
-      const category = new Category(
-        getMockCategoryProps({ deletedAt }),
-      );
+      const category = new Category(getMockCategoryProps({ deletedAt }));
 
       expect(category.deletedAt).toEqual(deletedAt);
     });
