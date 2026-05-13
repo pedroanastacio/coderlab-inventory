@@ -107,7 +107,7 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
       <div className="space-y-2">
         <Label htmlFor="parentId">Categoria Pai</Label>
         <Select value={parentId} onValueChange={setParentId}>
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Nenhuma (categoria raiz)" />
           </SelectTrigger>
           <SelectContent>
