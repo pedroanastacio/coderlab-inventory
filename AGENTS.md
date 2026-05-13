@@ -86,3 +86,5 @@ pnpm dev
 
 - Requirements: `docs/requirements.md`
 - NestJS Skill: `.agents/skills/nestjs-best-practices/`
+- Plans: `docs/superpowers/plans/`
+- Specs: `docs/superpowers/specs/`
