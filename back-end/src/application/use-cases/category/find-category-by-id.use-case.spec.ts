@@ -41,6 +41,7 @@ describe('FindCategoryByIdUseCase', () => {
 
       expect(result.id).toBe('category-123');
       expect(result.name).toBe('Electronics');
+      expect(result.parent).toBeNull();
     });
 
     it('should throw NotFoundException when category not found', async () => {
@@ -50,6 +51,22 @@ describe('FindCategoryByIdUseCase', () => {
       await expect(() =>
         useCase.execute({ id: 'non-existent' }),
       ).rejects.toThrow('Category with id non-existent not found');
+    });
+
+    it('should include parent when category has parentId', async () => {
+      const parent = await repository.create(
+        new Category({ id: 'parent-1', name: 'Parent' }),
+      );
+
+      await repository.create(
+        new Category({ id: 'child-1', name: 'Child', parentId: parent.id }),
+      );
+
+      const result = await useCase.execute({ id: 'child-1' });
+
+      expect(result.parent).toBeDefined();
+      expect(result.parent?.name).toBe('Parent');
+      expect(result.parent?.id).toBe('parent-1');
     });
   });
 });

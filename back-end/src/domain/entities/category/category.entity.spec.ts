@@ -98,6 +98,24 @@ describe('Category', () => {
 
       expect(category.deletedAt).toEqual(deletedAt);
     });
+
+    it('should default parent to null when not provided', () => {
+      const props = getMockCategoryProps();
+      const category = new Category(props);
+
+      expect(category.parent).toBeNull();
+    });
+
+    it('should accept parent object when provided', () => {
+      const parent = new Category(getMockCategoryProps({ id: 'parent-1', name: 'Parent' }));
+      const category = new Category(
+        getMockCategoryProps({ name: 'Child', parentId: parent.id, parent }),
+      );
+
+      expect(category.parent).toBeDefined();
+      expect(category.parent!.id).toBe('parent-1');
+      expect(category.parent!.name).toBe('Parent');
+    });
   });
 
   describe('validateHierarchy', () => {

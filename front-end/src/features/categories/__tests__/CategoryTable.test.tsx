@@ -5,20 +5,31 @@ import { buildCategory } from '@/test/factories/category'
 import { CategoryTable } from '../components/CategoryTable'
 
 const mockCategories = [
-  buildCategory({ id: '1', name: 'Tech', description: 'Tech stuff' }),
-  buildCategory({ id: '2', name: 'No Desc', description: null }),
+  buildCategory({
+    id: '1',
+    name: 'Tech',
+    parent: {
+      id: 'p1',
+      name: 'Root',
+      description: null,
+      parentId: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  }),
+  buildCategory({ id: '2', name: 'Orphan', parent: null }),
 ]
 
 describe('CategoryTable', () => {
-  it('renders categories', () => {
+  it('renders categories and parent name', () => {
     renderWithProviders(
       <CategoryTable data={mockCategories} page={1} onPageChange={vi.fn()} />,
     )
     expect(screen.getByText('Tech')).toBeInTheDocument()
-    expect(screen.getByText('Tech stuff')).toBeInTheDocument()
+    expect(screen.getByText('Root')).toBeInTheDocument()
   })
 
-  it('shows dash for missing description', () => {
+  it('shows dash for missing parent', () => {
     renderWithProviders(
       <CategoryTable data={[mockCategories[1]]} page={1} onPageChange={vi.fn()} />,
     )
